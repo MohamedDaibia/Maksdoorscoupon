@@ -1,0 +1,80 @@
+<div class="page">
+  <!-- LEFT: form -->
+  <section class="form-side">
+    <form class="card" [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+      <div class="brand">Maksdoors <span>Coupons</span></div>
+      <h1>Create your account</h1>
+      <p class="subtitle">Join the club and start collecting your coupons.</p>
+
+      @if (submitted) {
+        <div class="success" role="status">
+          Your details look good. Connect the form to your API to finish registration.
+        </div>
+      }
+
+      <div class="field">
+        <label for="name">Name</label>
+        <input id="name" type="text" formControlName="name" autocomplete="name" placeholder="Your full name" />
+        @if (invalid('name')) { <small>Enter your name (at least 3 characters).</small> }
+      </div>
+
+      <div class="field">
+        <label for="phone">Phone Number</label>
+        <input id="phone" type="tel" formControlName="phone" inputmode="numeric" maxlength="10"
+               autocomplete="tel" placeholder="10-digit mobile number" />
+        @if (invalid('phone')) { <small>Enter a valid 10-digit mobile number.</small> }
+      </div>
+
+      <div class="field">
+        <label for="password">Password</label>
+        <div class="password-wrap">
+          <input id="password" [type]="showPassword ? 'text' : 'password'" formControlName="password"
+                 autocomplete="new-password" placeholder="At least 8 characters" />
+          <button type="button" class="toggle" (click)="showPassword = !showPassword">
+            {{ showPassword ? 'Hide' : 'Show' }}
+          </button>
+        </div>
+        @if (invalid('password')) { <small>Password must be at least 8 characters.</small> }
+      </div>
+
+      <div class="row">
+        <div class="field">
+          <label for="state">State</label>
+          <select id="state" formControlName="state" (change)="onStateChange()">
+            <option value="" disabled>Select state</option>
+            @for (s of states; track s) { <option [value]="s">{{ s }}</option> }
+          </select>
+          @if (invalid('state')) { <small>Select a state.</small> }
+        </div>
+
+        <div class="field">
+          <label for="district">District</label>
+          <select id="district" formControlName="district">
+            <option value="" disabled>Select district</option>
+            @for (d of districts; track d) { <option [value]="d">{{ d }}</option> }
+          </select>
+          @if (invalid('district')) { <small>Select a district.</small> }
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="postalCode">Postal Code</label>
+        <input id="postalCode" type="text" formControlName="postalCode" inputmode="numeric" maxlength="6"
+               autocomplete="postal-code" placeholder="6-digit PIN code" />
+        @if (invalid('postalCode')) { <small>Enter a valid 6-digit postal code.</small> }
+      </div>
+
+      <button type="submit" class="submit">Sign Up</button>
+      <p class="alt">Already have an account? <a href="#" (click)="$event.preventDefault()">Sign in</a></p>
+    </form>
+  </section>
+
+  <!-- RIGHT: image -->
+  <section class="image-side" aria-label="Exclusively for carpenters">
+    <div class="overlay">
+      <span class="badge">Carpenters Club</span>
+      <h2>Created exclusively<br />for <span>Carpenters</span></h2>
+      <p>Earn rewards on every project you build.</p>
+    </div>
+  </section>
+</div>

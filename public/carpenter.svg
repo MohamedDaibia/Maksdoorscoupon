@@ -1,0 +1,91 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 1000" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="wood" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#b9783a"/><stop offset="1" stop-color="#7a4a1f"/>
+    </linearGradient>
+    <linearGradient id="steel" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#e6e9ec"/><stop offset="1" stop-color="#9aa3ab"/>
+    </linearGradient>
+    <linearGradient id="handle" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#d9a066"/><stop offset="1" stop-color="#a86b30"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="14" stdDeviation="14" flood-color="#000" flood-opacity=".45"/>
+    </filter>
+  </defs>
+
+  <!-- workbench planks -->
+  <rect width="900" height="1000" fill="url(#wood)"/>
+  <g stroke="#4a2a0e" stroke-opacity=".55" stroke-width="3">
+    <line x1="0" y1="200" x2="900" y2="200"/><line x1="0" y1="400" x2="900" y2="400"/>
+    <line x1="0" y1="600" x2="900" y2="600"/><line x1="0" y1="800" x2="900" y2="800"/>
+  </g>
+  <g fill="none" stroke="#5b330f" stroke-opacity=".28" stroke-width="2">
+    <path d="M0 60 C200 20 400 100 900 50"/><path d="M0 130 C250 90 500 170 900 120"/>
+    <path d="M0 270 C200 230 450 310 900 260"/><path d="M0 340 C300 300 600 380 900 330"/>
+    <path d="M0 470 C250 430 500 510 900 460"/><path d="M0 540 C300 500 550 580 900 530"/>
+    <path d="M0 670 C200 630 450 710 900 660"/><path d="M0 740 C300 700 600 780 900 730"/>
+    <path d="M0 870 C250 830 500 910 900 860"/><path d="M0 940 C300 900 550 980 900 930"/>
+  </g>
+
+  <!-- sawdust -->
+  <g fill="#e8c48f" fill-opacity=".55">
+    <circle cx="120" cy="760" r="5"/><circle cx="170" cy="790" r="4"/><circle cx="90" cy="810" r="3"/>
+    <circle cx="700" cy="880" r="5"/><circle cx="750" cy="850" r="3"/><circle cx="660" cy="910" r="4"/>
+    <circle cx="300" cy="890" r="3"/><circle cx="520" cy="130" r="4"/><circle cx="600" cy="90" r="3"/>
+  </g>
+
+  <!-- hand saw -->
+  <g transform="translate(70 130) rotate(18 340 400)" filter="url(#shadow)">
+    <path d="M0 360 L560 340 L560 500 L0 512 Z" fill="url(#steel)"/>
+    <path d="M0 512  L9,532 L18,512 L27,532 L36,512 L45,532 L54,512 L63,532 L72,512 L81,532 L90,512 L99,532 L108,512 L117,532 L126,512 L135,532 L144,512 L153,532 L162,512 L171,532 L180,512 L189,532 L198,512 L207,532 L216,512 L225,532 L234,512 L243,532 L252,512 L261,532 L270,512 L279,532 L288,512 L297,532 L306,512 L315,532 L324,512 L333,532 L342,512 L351,532 L360,512 L369,532 L378,512 L387,532 L396,512 L405,532 L414,512 L423,532 L432,512 L441,532 L450,512 L459,532 L468,512 L477,532 L486,512 L495,532 L504,512 Z" fill="url(#steel)"/>
+    <path d="M0 380 L560 362" stroke="#fff" stroke-opacity=".5" stroke-width="3" fill="none"/>
+    <path d="M560 330 L720 330 Q790 330 790 395 L790 470 Q790 530 720 530 L560 520 Z" fill="url(#handle)"/>
+    <ellipse cx="690" cy="425" rx="42" ry="48" fill="#5b330f" fill-opacity=".85"/>
+    <circle cx="590" cy="372" r="7" fill="#c9ced3"/><circle cx="590" cy="488" r="7" fill="#c9ced3"/>
+  </g>
+
+  <!-- hammer -->
+  <g transform="translate(120 560) rotate(-32 300 150)" filter="url(#shadow)">
+    <rect x="40" y="130" width="420" height="42" rx="18" fill="url(#handle)"/>
+    <rect x="40" y="130" width="120" height="42" rx="18" fill="#3b2a1a" fill-opacity=".85"/>
+    <path d="M400 70 L520 70 L520 232 L400 232 Z" fill="url(#steel)"/>
+    <path d="M520 85 L590 70 L590 232 L520 217 Z" fill="#b7bfc6"/>
+    <path d="M400 70 L330 100 Q300 150 330 202 L400 232 Z" fill="#aab2b9"/>
+  </g>
+
+  <!-- pencil -->
+  <g transform="translate(520 120) rotate(-62)" filter="url(#shadow)">
+    <rect x="0" y="0" width="260" height="26" rx="4" fill="#f2c230"/>
+    <rect x="0" y="0" width="30" height="26" rx="4" fill="#d96a6a"/>
+    <path d="M260 0 L320 13 L260 26 Z" fill="#f3d9b1"/>
+    <path d="M300 8 L320 13 L300 18 Z" fill="#333"/>
+  </g>
+
+  <!-- ruler -->
+  <g transform="translate(450 820) rotate(-6)" filter="url(#shadow)">
+    <rect width="380" height="64" rx="6" fill="#e9c46a"/>
+    <g stroke="#6b4a12" stroke-width="2">
+      <line x1="10" y1="0" x2="10" y2="30"/>
+<line x1="28" y1="0" x2="28" y2="18"/>
+<line x1="46" y1="0" x2="46" y2="18"/>
+<line x1="64" y1="0" x2="64" y2="18"/>
+<line x1="82" y1="0" x2="82" y2="18"/>
+<line x1="100" y1="0" x2="100" y2="30"/>
+<line x1="118" y1="0" x2="118" y2="18"/>
+<line x1="136" y1="0" x2="136" y2="18"/>
+<line x1="154" y1="0" x2="154" y2="18"/>
+<line x1="172" y1="0" x2="172" y2="18"/>
+<line x1="190" y1="0" x2="190" y2="30"/>
+<line x1="208" y1="0" x2="208" y2="18"/>
+<line x1="226" y1="0" x2="226" y2="18"/>
+<line x1="244" y1="0" x2="244" y2="18"/>
+<line x1="262" y1="0" x2="262" y2="18"/>
+<line x1="280" y1="0" x2="280" y2="30"/>
+<line x1="298" y1="0" x2="298" y2="18"/>
+<line x1="316" y1="0" x2="316" y2="18"/>
+<line x1="334" y1="0" x2="334" y2="18"/>
+<line x1="352" y1="0" x2="352" y2="18"/>
+    </g>
+  </g>
+</svg>
