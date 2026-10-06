@@ -1,0 +1,44 @@
+<div class="page">
+  <app-header />
+
+  <main class="main">
+    <a class="back" routerLink="/claimed">‹ Claimed coupons</a>
+
+    <h1>Total earned</h1>
+    <p class="owner">{{ user()?.name }}</p>
+
+    <div class="total-card">
+      <span class="total-label">Paid to you so far</span>
+      <span class="total-value">₹{{ totalEarned() }}</span>
+      <span class="total-count">from {{ paid().length }} paid {{ paid().length === 1 ? 'coupon' : 'coupons' }}</span>
+    </div>
+
+    @if (paid().length === 0) {
+      <div class="empty">
+        <p>No paid coupons yet. Coupons appear here once they have been paid.</p>
+        <a class="cta" routerLink="/claimed">View pending coupons</a>
+      </div>
+    } @else {
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">Coupon number</th>
+            <th scope="col">Claimed date &amp; time</th>
+            <th scope="col">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (c of paid(); track c.code) {
+            <tr>
+              <td data-label="Coupon number" class="code">{{ c.code }}</td>
+              <td data-label="Claimed on">{{ c.claimedAt | date: 'd MMM y, h:mm a' }}</td>
+              <td data-label="Status">
+                <span class="badge status-paid">{{ c.status }}</span>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  </main>
+</div>

@@ -1,0 +1,28 @@
+<header class="topbar">
+  <a class="brand" routerLink="/coupon">
+    <img class="logo" src="maks-logo-small.png" alt="MAKS - Finest Craftsmanship" />
+    <span class="brand-text">Maksdoors <span class="brand-word">Coupons</span></span>
+  </a>
+
+  <div class="right">
+    <a class="nav-link" routerLink="/claimed" routerLinkActive="active">Claimed coupons</a>
+
+    <div class="profile">
+      <button type="button" class="dp" (click)="menuOpen.set(!menuOpen())"
+              aria-label="Account menu" [attr.aria-expanded]="menuOpen()">
+        @if (user()?.photoUrl) {
+          <img [src]="user()!.photoUrl" alt="Your photo" />
+        } @else {
+          <span>{{ initial() }}</span>
+        }
+      </button>
+      @if (menuOpen()) {
+        <div class="menu" role="menu">
+          <div class="menu-name">{{ user()?.name }}</div>
+          <div class="menu-phone">{{ user()?.phone }}</div>
+          <button type="button" class="menu-item" role="menuitem" (click)="signOut()">Sign out</button>
+        </div>
+      }
+    </div>
+  </div>
+</header>

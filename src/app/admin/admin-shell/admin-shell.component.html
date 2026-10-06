@@ -1,0 +1,20 @@
+<header class="bar">
+  <a class="brand" routerLink="/admin">
+    <img class="logo" src="maks-logo-small.png" alt="MAKS - Finest Craftsmanship" />
+    <span class="brand-text">Admin</span>
+  </a>
+
+  <nav class="nav" aria-label="Admin sections">
+    <a routerLink="/admin/carpenters" routerLinkActive="active">Carpenters</a>
+    <a routerLink="/admin/coupons" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Coupons</a>
+  </nav>
+
+  <div class="actions">
+    <button type="button" class="signout" (click)="signOut()" [attr.title]="admin()?.username">Sign out</button>
+    <a class="add" routerLink="/admin/coupons/add" routerLinkActive="active">+ Add Coupon</a>
+  </div>
+</header>
+
+<main class="content">
+  <router-outlet />
+</main>

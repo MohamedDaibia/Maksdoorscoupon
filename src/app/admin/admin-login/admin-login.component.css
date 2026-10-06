@@ -1,0 +1,66 @@
+:host { display: block; }
+* { box-sizing: border-box; }
+
+.page {
+  position: relative;
+  min-height: 100vh;
+  display: flex; align-items: center; justify-content: center;
+  padding: 96px 20px 32px;
+  font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  background:
+    radial-gradient(900px 500px at 50% -120px, rgba(200, 128, 58, .35), transparent 70%),
+    linear-gradient(135deg, #3b2a1a, #5a3416);
+}
+
+.corner-logo {
+  position: absolute; top: 16px; left: 20px; z-index: 2;
+  height: 56px; width: auto;
+  background: #fff; border-radius: 14px; padding: 4px 8px;
+  box-shadow: 0 6px 18px rgba(40, 22, 8, .35);
+}
+
+.card {
+  width: 100%; max-width: 400px; padding: 32px 28px;
+  background: #fff; border-radius: 18px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, .35);
+}
+h1 { margin: 0; font-size: 26px; color: #3b2a1a; }
+.subtitle { margin: 6px 0 22px; color: #7a6a5a; font-size: 14px; }
+
+.error {
+  margin-bottom: 16px; padding: 12px 14px; border-radius: 10px;
+  background: #fdecec; color: #a12727; font-size: 14px;
+}
+
+.field { display: flex; flex-direction: column; margin-bottom: 16px; }
+label { font-size: 13px; font-weight: 600; color: #3b2a1a; margin-bottom: 6px; }
+input {
+  width: 100%; padding: 12px 14px; border: 1.5px solid #dccfbf; border-radius: 10px;
+  font-size: 15px; background: #fff; color: #2a1d12; outline: none;
+  transition: border-color .2s, box-shadow .2s;
+}
+input:focus { border-color: #b9722d; box-shadow: 0 0 0 3px rgba(185, 114, 45, .18); }
+input.ng-invalid.ng-touched { border-color: #d64545; }
+small { color: #d64545; font-size: 12px; margin-top: 4px; }
+
+.password-wrap { position: relative; display: flex; }
+.password-wrap input { padding-right: 64px; }
+.toggle {
+  position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
+  border: none; background: none; color: #b9722d; font-weight: 600; cursor: pointer;
+}
+
+.submit {
+  width: 100%; margin-top: 8px; padding: 14px; border: none; border-radius: 10px;
+  background: linear-gradient(135deg, #c8803a, #8a4b14); color: #fff;
+  font-size: 16px; font-weight: 600; cursor: pointer;
+  transition: transform .15s, box-shadow .15s, opacity .2s;
+}
+.submit:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 8px 18px rgba(138, 75, 20, .35); }
+.submit:disabled { opacity: .6; cursor: progress; }
+
+@media (max-width: 600px) {
+  .page { padding-top: 84px; }
+  .corner-logo { height: 48px; top: 12px; left: 14px; }
+  .card { padding: 26px 20px; }
+}

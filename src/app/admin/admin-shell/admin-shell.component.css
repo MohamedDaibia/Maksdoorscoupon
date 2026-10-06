@@ -1,0 +1,50 @@
+:host {
+  display: block; min-height: 100vh; background: #faf7f2; color: #3b2a1a;
+  font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+* { box-sizing: border-box; }
+
+.bar {
+  display: flex; align-items: center; gap: 12px 28px; flex-wrap: wrap;
+  padding: 12px 24px;
+  background: linear-gradient(135deg, #5a3416, #3b2a1a); color: #fff;
+}
+
+.brand { display: flex; align-items: center; gap: 10px; color: #fff; text-decoration: none; }
+.logo { height: 44px; width: auto; display: block; background: #fff; border-radius: 12px; padding: 3px 6px; }
+.brand-text { font-weight: 800; font-size: 18px; color: #f5b567; letter-spacing: .3px; }
+
+.nav { display: flex; align-items: center; gap: 8px; }
+.nav a {
+  color: #fff; text-decoration: none; font-weight: 600; font-size: 15px;
+  padding: 8px 14px; border-radius: 10px; transition: background .2s, color .2s;
+}
+.nav a:hover { background: rgba(255, 255, 255, .12); }
+.nav a.active { background: rgba(245, 181, 103, .2); color: #f5b567; }
+
+/* Right corner: Sign out, then the Add Coupon button */
+.actions { margin-left: auto; display: flex; align-items: center; gap: 14px; }
+.signout {
+  padding: 8px 14px; border-radius: 10px; border: 1.5px solid rgba(255, 255, 255, .45);
+  background: transparent; color: #fff; font-weight: 600; font-size: 14px; cursor: pointer;
+}
+.signout:hover { background: rgba(255, 255, 255, .12); }
+.add {
+  padding: 10px 18px; border-radius: 10px; text-decoration: none; white-space: nowrap;
+  background: linear-gradient(135deg, #f5b567, #d98a2b); color: #3b2a1a;
+  font-weight: 800; font-size: 15px; transition: transform .15s, box-shadow .15s;
+}
+.add:hover { transform: translateY(-1px); box-shadow: 0 8px 18px rgba(0, 0, 0, .3); }
+.add.active { box-shadow: 0 0 0 3px rgba(245, 181, 103, .5); }
+
+.content { max-width: 1040px; margin: 0 auto; padding: 32px 24px 60px; }
+
+@media (max-width: 640px) {
+  .bar { padding: 10px 14px; gap: 10px; }
+  .brand-text { display: none; }
+  /* logo + actions on the first row, the two nav links on a row of their own */
+  .actions { order: 2; gap: 10px; }
+  .nav { order: 3; width: 100%; }
+  .nav a { flex: 1; text-align: center; background: rgba(255, 255, 255, .08); }
+  .content { padding: 24px 14px 48px; }
+}

@@ -1,0 +1,71 @@
+<div class="page">
+  <app-header />
+
+  <main class="main">
+    <!-- Whose coupons these are -->
+    <section class="holder">
+      <div class="avatar">
+        @if (user()?.photoUrl) {
+          <img [src]="user()!.photoUrl" alt="Your photo" />
+        } @else {
+          <span>{{ initial() }}</span>
+        }
+      </div>
+      <div>
+        <h1>{{ user()?.name }}</h1>
+        <p class="phone">{{ user()?.phone }}</p>
+      </div>
+    </section>
+
+    <h2>Claimed coupons</h2>
+
+    <div class="summary">
+      <div class="stat">
+        <span class="summary-label">Pending coupons</span>
+        <span class="summary-value">{{ pending().length }}</span>
+      </div>
+
+      <div class="summary-side">
+        <!-- Above Total value: opens the list of coupons that have been paid -->
+        <a class="earned-link" routerLink="/earned">
+          <span>Total earned</span>
+          <span class="earned-amount">₹{{ totalEarned() }} <i aria-hidden="true">›</i></span>
+        </a>
+        <div class="stat">
+          <span class="summary-label">Total value</span>
+          <span class="summary-value">₹{{ totalValue() }}</span>
+        </div>
+      </div>
+    </div>
+
+    @if (pending().length === 0) {
+      <div class="empty">
+        <p>You have no pending coupons.</p>
+        <a class="cta" routerLink="/coupon">Redeem a coupon</a>
+      </div>
+    } @else {
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">Coupon number</th>
+            <th scope="col">Claimed date &amp; time</th>
+            <th scope="col">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (c of pending(); track c.code) {
+            <tr>
+              <td data-label="Coupon number" class="code">{{ c.code }}</td>
+              <td data-label="Claimed on">{{ c.claimedAt | date: 'd MMM y, h:mm a' }}</td>
+              <td data-label="Status">
+                <span class="badge status-pending">{{ c.status }}</span>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+
+      <a class="cta secondary" routerLink="/coupon">Redeem another coupon</a>
+    }
+  </main>
+</div>

@@ -1,0 +1,142 @@
+:host { display: block; }
+* { box-sizing: border-box; }
+
+.head { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 20px; }
+h1 { margin: 0; font-size: 28px; color: #3b2a1a; }
+.count { margin: 0 0 14px; color: #7a6a5a; font-size: 14px; }
+
+.search {
+  width: 280px; max-width: 100%; padding: 11px 14px; border: 1.5px solid #dccfbf; border-radius: 10px;
+  font-size: 15px; background: #fff; color: #2a1d12; outline: none;
+}
+.search:focus { border-color: #b9722d; box-shadow: 0 0 0 3px rgba(185, 114, 45, .18); }
+
+.stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 22px; }
+.stat { padding: 14px 16px; border-radius: 14px; background: #fff; border: 1.5px solid #eadfce; }
+.stat-label { display: block; font-size: 13px; color: #7a6a5a; }
+.stat-value { display: block; margin-top: 2px; font-size: 24px; font-weight: 700; color: #8a4b14; }
+
+/* ---------- Filter tabs ---------- */
+.tabs { display: inline-flex; flex-wrap: wrap; gap: 6px; padding: 5px; margin-bottom: 18px; border-radius: 12px; background: #efe5d6; }
+.tab {
+  padding: 9px 16px; border: none; border-radius: 9px; background: transparent;
+  color: #5a3416; font-weight: 600; font-size: 14px; cursor: pointer; transition: background .2s;
+}
+.tab:hover { background: rgba(255, 255, 255, .6); }
+.tab.active { background: #fff; color: #8a4b14; box-shadow: 0 2px 8px rgba(90, 52, 22, .15); }
+.tab-count { margin-left: 4px; color: #7a6a5a; font-weight: 700; }
+.tab.active .tab-count { color: #b9722d; }
+
+/* ---------- Table ---------- */
+.table-wrap { overflow-x: auto; }
+.stack { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; }
+.select {
+  padding: 8px 10px; border: 1.5px solid #dccfbf; border-radius: 8px; background: #fff;
+  color: #2a1d12; font-size: 14px; font-weight: 600; outline: none; cursor: pointer;
+}
+.select:focus { border-color: #b9722d; box-shadow: 0 0 0 3px rgba(185, 114, 45, .18); }
+.pay-btn {
+  padding: 6px 12px; border-radius: 8px; border: 1.5px solid #2e9d4a; background: #fff;
+  color: #1f6a30; font-weight: 700; font-size: 13px; cursor: pointer; white-space: nowrap;
+}
+.pay-btn:hover { background: #e8f5ea; }
+
+.table {
+  width: 100%; border-collapse: separate; border-spacing: 0;
+  background: #fff; border: 1.5px solid #eadfce; border-radius: 14px; overflow: hidden;
+  box-shadow: 0 6px 18px rgba(90, 52, 22, .06);
+}
+.table th {
+  text-align: left; padding: 13px 16px; font-size: 12px; letter-spacing: .4px;
+  text-transform: uppercase; color: #7a6a5a; background: #f6efe6; white-space: nowrap;
+}
+.table td { padding: 14px 16px; border-top: 1px solid #f0e6d8; vertical-align: middle; }
+.code { font-weight: 700; letter-spacing: 1.5px; }
+.muted { color: #7a6a5a; font-size: 13px; }
+
+.person { display: flex; align-items: center; gap: 12px; font-weight: 600; }
+.avatar {
+  width: 40px; height: 40px; flex: none; border-radius: 50%; overflow: hidden;
+  background: #b9722d; color: #fff; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+}
+.avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+.badge { display: inline-block; padding: 5px 12px; border-radius: 999px; font-size: 13px; font-weight: 700; }
+.status-available { background: #e1edff; color: #1f4f9e; }
+.status-pending { background: #fff3d6; color: #8a5a00; }
+.status-paid { background: #e1f4e6; color: #1f6a30; }
+
+.empty {
+  text-align: center; padding: 48px 20px; border-radius: 16px;
+  background: #fff; border: 1.5px dashed #dccfbf; color: #7a6a5a;
+}
+.empty p { margin: 0 0 16px; font-size: 16px; }
+
+.cta {
+  display: inline-block; padding: 12px 22px; border-radius: 10px; text-decoration: none; border: none;
+  background: linear-gradient(135deg, #c8803a, #8a4b14); color: #fff; font-weight: 700; font-size: 15px; cursor: pointer;
+}
+.cta:hover { box-shadow: 0 8px 18px rgba(138, 75, 20, .35); }
+
+/* ---------- Add coupon form ---------- */
+.total-line {
+  margin: 0; padding: 9px 16px; border-radius: 999px; background: #fbf1e5;
+  border: 1.5px solid #e6c9a0; color: #5a3416; font-size: 15px; font-weight: 600;
+}
+.total-line strong { color: #8a4b14; font-size: 18px; margin-left: 4px; }
+
+.panel {
+  max-width: 480px; padding: 26px 24px; border-radius: 16px;
+  background: #fff; border: 1.5px solid #eadfce; box-shadow: 0 6px 18px rgba(90, 52, 22, .06);
+}
+.subtitle { margin: 6px 0 22px; color: #7a6a5a; }
+.field { display: flex; flex-direction: column; margin-bottom: 18px; }
+label { font-size: 13px; font-weight: 600; margin-bottom: 6px; }
+.input-row { display: flex; gap: 10px; }
+.input-row input { flex: 1; min-width: 0; }
+input.text {
+  padding: 12px 14px; border: 1.5px solid #dccfbf; border-radius: 10px; width: 100%;
+  font-size: 16px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase;
+  background: #fff; color: #2a1d12; outline: none;
+}
+input.text::placeholder { text-transform: none; letter-spacing: 0; font-weight: 400; color: #b9a995; }
+input.text:focus { border-color: #b9722d; box-shadow: 0 0 0 3px rgba(185, 114, 45, .18); }
+input.text.ng-invalid.ng-touched { border-color: #d64545; }
+.ghost {
+  padding: 0 16px; border-radius: 10px; border: 1.5px solid #b9722d; background: #fff;
+  color: #8a4b14; font-weight: 700; font-size: 14px; cursor: pointer; white-space: nowrap;
+}
+.ghost:hover { background: #fbf1e5; }
+.readonly {
+  padding: 12px 14px; border-radius: 10px; background: #f6efe6; color: #5a3416; font-weight: 700;
+}
+.error { color: #d64545; font-size: 13px; margin-top: 6px; }
+.success { margin-bottom: 18px; padding: 12px 14px; border-radius: 10px; background: #e8f5ea; color: #1f6a30; font-size: 14px; }
+.success a { color: #1f6a30; font-weight: 700; }
+.form-actions { display: flex; align-items: center; gap: 16px; }
+.cancel { color: #7a6a5a; text-decoration: none; font-weight: 600; }
+.cancel:hover { text-decoration: underline; }
+
+@media (max-width: 720px) {
+  .stats { grid-template-columns: repeat(2, 1fr); }
+  .search { width: 100%; }
+
+  /* Each table row becomes a card */
+  .table, .table tbody { display: block; background: transparent; border: none; box-shadow: none; }
+  .table thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  .table tr {
+    display: block; margin-bottom: 12px; background: #fff; border: 1.5px solid #eadfce;
+    border-radius: 14px; box-shadow: 0 6px 18px rgba(90, 52, 22, .06);
+  }
+  .table td {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    padding: 11px 14px; border-top: 1px solid #f0e6d8; text-align: right;
+  }
+  .table td:first-child { border-top: none; }
+  .stack { align-items: flex-end; }
+  .table td::before {
+    content: attr(data-label); flex: none; font-size: 12px; font-weight: 600; letter-spacing: .4px;
+    text-transform: uppercase; color: #7a6a5a; text-align: left;
+  }
+}

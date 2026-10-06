@@ -100,31 +100,6 @@ small { color: #d64545; font-size: 12px; margin-top: 4px; }
   .row { flex-direction: column; gap: 0; }
 }
 
-/* ---------- Photo upload ---------- */
-.photo-row { display: flex; align-items: center; gap: 16px; }
-.avatar {
-  width: 84px; height: 84px; flex: none; border-radius: 50%;
-  display: flex; align-items: center; justify-content: center; overflow: hidden;
-  border: 2px dashed #dccfbf; background: #fff; color: #9a8a79; font-size: 12px;
-}
-.avatar.has-photo { border: 2px solid #b9722d; }
-.avatar img { width: 100%; height: 100%; object-fit: cover; }
-.photo-actions { display: flex; flex-direction: column; gap: 6px; }
-.photo-buttons { display: flex; align-items: center; flex-wrap: wrap; gap: 8px 12px; }
-.upload-btn {
-  padding: 9px 16px; border-radius: 10px; border: 1.5px solid #b9722d; background: #fff;
-  color: #8a4b14; font-weight: 600; font-size: 14px; cursor: pointer;
-  transition: background .2s;
-}
-.upload-btn:hover { background: #fbf1e5; }
-.link-btn { border: none; background: none; color: #d64545; font-weight: 600; font-size: 14px; cursor: pointer; padding: 0; }
-.link-btn:hover { text-decoration: underline; }
-.hint { font-size: 12px; color: #7a6a5a; }
-
-/* "Take photo" only appears on touch devices (phones and tablets) */
-.camera-btn { display: none; }
-@media (pointer: coarse) { .camera-btn { display: inline-block; } }
-
 /* ---------- Logo in the top-left corner ---------- */
 .corner-logo {
   position: absolute; top: 16px; left: 20px; z-index: 2;

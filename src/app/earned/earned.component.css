@@ -1,0 +1,130 @@
+:host { display: block; }
+* { box-sizing: border-box; }
+
+.page {
+  min-height: 100vh;
+  font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  background:
+    radial-gradient(900px 400px at 50% -80px, rgba(200, 128, 58, .18), transparent 70%),
+    #faf7f2;
+  color: #3b2a1a;
+}
+
+.main { width: 100%; max-width: 720px; margin: 0 auto; padding: 36px 24px 60px; }
+
+/* ---------- Whose coupons ---------- */
+.holder { display: flex; align-items: center; gap: 16px; margin-bottom: 28px; }
+.avatar {
+  width: 64px; height: 64px; flex: none; border-radius: 50%; overflow: hidden;
+  border: 3px solid #b9722d; background: #b9722d; color: #fff;
+  display: flex; align-items: center; justify-content: center; font-size: 26px; font-weight: 700;
+}
+.avatar img { width: 100%; height: 100%; object-fit: cover; }
+h1 { margin: 0; font-size: 26px; }
+.phone { margin: 2px 0 0; color: #7a6a5a; }
+h2 { margin: 0 0 16px; font-size: 20px; color: #5a3416; }
+
+.summary { display: flex; gap: 16px; margin-bottom: 20px; }
+.stat {
+  flex: 1; padding: 14px 18px; border-radius: 14px; background: #fff;
+  border: 1.5px solid #eadfce; display: flex; flex-direction: column; gap: 4px;
+}
+.summary-label { font-size: 13px; color: #7a6a5a; }
+.summary-value { font-size: 24px; font-weight: 700; color: #8a4b14; }
+
+/* ---------- Table ---------- */
+.table {
+  width: 100%; border-collapse: separate; border-spacing: 0; margin-bottom: 24px;
+  background: #fff; border: 1.5px solid #eadfce; border-radius: 14px; overflow: hidden;
+  box-shadow: 0 6px 18px rgba(90, 52, 22, .06);
+}
+.table th {
+  text-align: left; padding: 14px 18px; font-size: 13px; letter-spacing: .4px;
+  text-transform: uppercase; color: #7a6a5a; background: #f6efe6;
+}
+.table td { padding: 16px 18px; border-top: 1px solid #f0e6d8; }
+.code { font-weight: 700; letter-spacing: 1.5px; }
+
+.badge {
+  display: inline-block; padding: 5px 12px; border-radius: 999px;
+  font-size: 13px; font-weight: 700;
+}
+.status-pending { background: #fff3d6; color: #8a5a00; }
+.status-paid { background: #e1f4e6; color: #1f6a30; }
+
+/* ---------- Empty + buttons ---------- */
+.empty {
+  text-align: center; padding: 48px 20px; border-radius: 16px;
+  background: #fff; border: 1.5px dashed #dccfbf; color: #7a6a5a;
+}
+.empty p { margin: 0 0 18px; font-size: 17px; }
+
+.cta {
+  display: inline-block; padding: 14px 26px; border-radius: 12px; text-decoration: none;
+  background: linear-gradient(135deg, #c8803a, #8a4b14); color: #fff; font-weight: 700;
+  transition: transform .15s, box-shadow .15s;
+}
+.cta:hover { transform: translateY(-1px); box-shadow: 0 8px 18px rgba(138, 75, 20, .35); }
+.cta.secondary {
+  display: block; text-align: center; background: #fff; color: #8a4b14;
+  border: 1.5px solid #b9722d;
+}
+.cta.secondary:hover { background: #fbf1e5; box-shadow: none; }
+
+/* ---------- Mobile: each row becomes a card ---------- */
+@media (max-width: 600px) {
+  .main { padding: 24px 16px 48px; }
+  h1 { font-size: 22px; }
+  .summary-value { font-size: 20px; }
+
+  .table, .table tbody { display: block; background: transparent; border: none; box-shadow: none; }
+  .table thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  .table tr {
+    display: block; margin-bottom: 12px; background: #fff; border: 1.5px solid #eadfce;
+    border-radius: 14px; box-shadow: 0 6px 18px rgba(90, 52, 22, .06);
+  }
+  .table td {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    padding: 12px 16px; border-top: 1px solid #f0e6d8;
+  }
+  .table td:first-child { border-top: none; }
+  .table td::before {
+    content: attr(data-label); font-size: 12px; font-weight: 600; letter-spacing: .4px;
+    text-transform: uppercase; color: #7a6a5a;
+  }
+}
+
+/* ---------- Total earned link (sits above Total value) ---------- */
+.summary-side { flex: 1; display: flex; flex-direction: column; gap: 10px; }
+.summary-side .stat { flex: none; }
+.summary > .stat { flex: 1; }
+.earned-link {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 12px 16px; border-radius: 14px; text-decoration: none;
+  background: #fbf1e5; border: 1.5px solid #b9722d; color: #8a4b14; font-weight: 700;
+  transition: background .2s, transform .15s;
+}
+.earned-link:hover { background: #f6e3cc; transform: translateY(-1px); }
+.earned-amount { color: #1f8a3b; white-space: nowrap; }
+.earned-amount i { font-style: normal; margin-left: 4px; }
+
+@media (max-width: 600px) {
+  .summary { flex-direction: column; }
+}
+
+/* ---------- Total earned page ---------- */
+.back {
+  display: inline-block; margin-bottom: 16px; color: #8a4b14; font-weight: 600; text-decoration: none;
+}
+.back:hover { text-decoration: underline; }
+.owner { margin: 4px 0 20px; color: #7a6a5a; }
+
+.total-card {
+  display: flex; flex-direction: column; gap: 4px; margin-bottom: 24px;
+  padding: 22px 24px; border-radius: 16px; color: #fff;
+  background: linear-gradient(135deg, #2e9d4a, #1f6a30);
+  box-shadow: 0 10px 24px rgba(31, 106, 48, .25);
+}
+.total-label { font-size: 14px; opacity: .9; }
+.total-value { font-size: 40px; font-weight: 800; line-height: 1.1; }
+.total-count { font-size: 14px; opacity: .9; }

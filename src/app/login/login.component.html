@@ -1,0 +1,43 @@
+<div class="page">
+  <img class="corner-logo" src="maks-logo-small.png" alt="MAKS - Finest Craftsmanship" />
+
+  <!-- LEFT: form -->
+  <section class="form-side">
+    <form class="card" [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+      <div class="brand">Maksdoors <span>Coupons</span></div>
+      <h1>Welcome back</h1>
+      <p class="subtitle">Sign in with your phone number to see your coupons.</p>
+
+      <div class="field">
+        <label for="phone">Phone Number</label>
+        <input id="phone" type="tel" formControlName="phone" inputmode="numeric" maxlength="10"
+               autocomplete="tel" placeholder="10-digit mobile number" />
+        @if (invalid('phone')) { <small>Enter a valid 10-digit mobile number.</small> }
+      </div>
+
+      <div class="field">
+        <label for="password">Password</label>
+        <div class="password-wrap">
+          <input id="password" [type]="showPassword ? 'text' : 'password'" formControlName="password"
+                 autocomplete="current-password" placeholder="Your password" />
+          <button type="button" class="toggle" (click)="showPassword = !showPassword">
+            {{ showPassword ? 'Hide' : 'Show' }}
+          </button>
+        </div>
+        @if (invalid('password')) { <small>Password must be at least 8 characters.</small> }
+      </div>
+
+      <button type="submit" class="submit">Sign In</button>
+      <p class="alt">New here? <a routerLink="/">Create an account</a></p>
+    </form>
+  </section>
+
+  <!-- RIGHT: image -->
+  <section class="image-side" aria-label="Exclusively for carpenters">
+    <div class="overlay">
+      <span class="badge">Carpenters Club</span>
+      <h2>Created exclusively<br />for <span>Carpenters</span></h2>
+      <p>Earn rewards on every project you build.</p>
+    </div>
+  </section>
+</div>

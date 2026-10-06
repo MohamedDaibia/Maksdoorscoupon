@@ -1,0 +1,76 @@
+<div class="page">
+  <app-header />
+
+  <!-- Centre: the big coupon field -->
+  <main class="main">
+    <h1>Redeem your coupon</h1>
+    <p class="subtitle">Type the coupon number printed on your coupon.</p>
+
+    @if (claimedMessage()) {
+      <div class="banner success" role="status">{{ claimedMessage() }}</div>
+    }
+
+    <form (ngSubmit)="onClaim()" autocomplete="off">
+      <input class="coupon-input" type="text" name="coupon" [formControl]="code"
+             placeholder="Enter your coupon" aria-label="Coupon number"
+             autocomplete="off" autocapitalize="characters" spellcheck="false"
+             [readOnly]="status() === 'claiming'"
+             [class.is-valid]="status() === 'valid'"
+             [class.is-invalid]="status() === 'invalid'" />
+    </form>
+
+    <div class="status" aria-live="polite">
+      @switch (status()) {
+        @case ('checking') { <span class="checking"><i class="spinner"></i>Checking coupon…</span> }
+        @case ('valid') { <span class="ok">✓ Valid coupon. Worth ₹{{ reward() }}</span> }
+        @case ('invalid') { <span class="bad">{{ errorMessage() }}</span> }
+      }
+    </div>
+
+    @if (showPhoto()) {
+      <section class="door-photo">
+        <h2>Door photo</h2>
+        <p class="photo-hint">Add a photo of your door to claim this coupon.</p>
+
+        <div class="door-frame" [class.has-photo]="doorPreview()">
+          @if (doorPreview()) {
+            <img [src]="doorPreview()" alt="Preview of your door photo" />
+          } @else {
+            <span>No photo yet</span>
+          }
+        </div>
+
+        <!-- Gallery / file picker -->
+        <input #galleryInput type="file" hidden
+               accept="image/jpeg,image/png,image/webp" (change)="onDoorPhotoSelected($event)" />
+        <!-- Phone camera (back camera; the capture attribute is ignored on desktop) -->
+        <input #cameraInput type="file" hidden accept="image/*" capture="environment"
+               (change)="onDoorPhotoSelected($event)" />
+
+        <div class="door-buttons">
+          <button type="button" class="photo-btn" (click)="galleryInput.click()">
+            {{ doorPreview() ? 'Change photo' : 'Upload photo' }}
+          </button>
+          <button type="button" class="photo-btn camera-btn" (click)="cameraInput.click()">
+            Take photo
+          </button>
+          @if (doorPreview()) {
+            <button type="button" class="link-btn" (click)="removeDoorPhoto()">Remove</button>
+          }
+        </div>
+
+        @if (photoError()) {
+          <small class="photo-error" role="alert">{{ photoError() }}</small>
+        }
+      </section>
+    }
+  </main>
+
+  <!-- Bottom: claim button -->
+  <footer class="bottombar">
+    <button type="button" class="claim" (click)="onClaim()"
+            [disabled]="!canClaim() && status() !== 'claiming'">
+      @if (status() === 'claiming') { Claiming… } @else { Claim }
+    </button>
+  </footer>
+</div>

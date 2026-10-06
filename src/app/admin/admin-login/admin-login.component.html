@@ -1,0 +1,35 @@
+<div class="page">
+  <img class="corner-logo" src="maks-logo-small.png" alt="MAKS - Finest Craftsmanship" />
+
+  <form class="card" [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+    <h1>Admin sign in</h1>
+    <p class="subtitle">Authorised staff only.</p>
+
+    @if (error()) {
+      <div class="error" role="alert">{{ error() }}</div>
+    }
+
+    <div class="field">
+      <label for="username">Username</label>
+      <input id="username" type="text" formControlName="username" autocomplete="username"
+             autocapitalize="none" spellcheck="false" placeholder="Admin username" />
+      @if (invalid('username')) { <small>Enter your admin username.</small> }
+    </div>
+
+    <div class="field">
+      <label for="password">Password</label>
+      <div class="password-wrap">
+        <input id="password" [type]="showPassword ? 'text' : 'password'" formControlName="password"
+               autocomplete="current-password" placeholder="Your password" />
+        <button type="button" class="toggle" (click)="showPassword = !showPassword">
+          {{ showPassword ? 'Hide' : 'Show' }}
+        </button>
+      </div>
+      @if (invalid('password')) { <small>Enter your password.</small> }
+    </div>
+
+    <button type="submit" class="submit" [disabled]="busy()">
+      {{ busy() ? 'Signing in…' : 'Sign In' }}
+    </button>
+  </form>
+</div>
