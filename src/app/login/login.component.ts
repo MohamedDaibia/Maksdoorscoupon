@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { SessionService } from '../session.service';
+import { CarpenterAuthService } from '../auth/carpenter-auth.service';
 
 type FieldName = 'phone' | 'password';
 
@@ -14,9 +14,11 @@ type FieldName = 'phone' | 'password';
 export class LoginComponent {
   private readonly fb = inject(FormBuilder);
   private readonly router = inject(Router);
-  private readonly session = inject(SessionService);
+  private readonly auth = inject(CarpenterAuthService);
 
   showPassword = false;
+  submitting = false;
+  error = '';
 
   readonly form = this.fb.nonNullable.group({
     phone: ['', [Validators.required, Validators.pattern(/^[6-9]\d{9}$/)]],
@@ -33,10 +35,16 @@ export class LoginComponent {
       this.form.markAllAsTouched();
       return;
     }
-    // TODO: verify phone + password with your login API over HTTPS before continuing.
-    // For now any valid-looking phone and password opens the coupon page (demo).
-    // Never log or store the plain password.
-    this.session.signIn(this.form.controls.phone.value);
-    this.router.navigateByUrl('/coupon');
+    this.error = '';
+    this.submitting = true;
+    const { phone, password } = this.form.getRawValue();
+    this.auth.login(phone, password).subscribe((result) => {
+      this.submitting = false;
+      if (result.ok) {
+        this.router.navigateByUrl('/coupon');
+      } else {
+        this.error = result.reason;
+      }
+    });
   }
 }

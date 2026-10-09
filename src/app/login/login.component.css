@@ -111,3 +111,9 @@ small { color: #d64545; font-size: 12px; margin-top: 4px; }
   .form-side { padding-top: 32px; }
   .corner-logo { height: 48px; top: 12px; left: 14px; }
 }
+
+.error {
+  margin-bottom: 16px; padding: 12px 14px; border-radius: 10px;
+  background: #fdecea; color: #a12622; font-size: 14px;
+}
+.submit:disabled { opacity: .7; cursor: not-allowed; transform: none; box-shadow: none; }

@@ -27,8 +27,10 @@
         @if (invalid('password')) { <small>Password must be at least 8 characters.</small> }
       </div>
 
-      <button type="submit" class="submit">Sign In</button>
-      <p class="alt">New here? <a routerLink="/">Create an account</a></p>
+      @if (error) { <div class="error" role="alert">{{ error }}</div> }
+
+      <button type="submit" class="submit" [disabled]="submitting">{{ submitting ? 'Signing in…' : 'Sign In' }}</button>
+      <p class="alt">New here? <a routerLink="/signup">Create an account</a></p>
     </form>
   </section>
 

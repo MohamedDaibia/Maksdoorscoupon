@@ -1,48 +1,69 @@
-import { Injectable, isDevMode, signal } from '@angular/core';
-import { Observable, delay, of } from 'rxjs';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { Injectable, inject, signal } from '@angular/core';
+import { Observable, catchError, map, of } from 'rxjs';
+import { API_URL } from '../api.config';
 
 export type AdminLoginResult = { ok: true } | { ok: false; reason: string };
+
+export interface AdminSession {
+  username: string;
+  name: string;
+  token: string;
+  expiresAt: string; // ISO date-time, from the server
+}
+
+interface LoginResponse {
+  token: string;
+  expiresAtUtc: string;
+  name: string;
+  roles: string[];
+}
 
 const ADMIN_KEY = 'maks.admin';
 
 /**
- * Admin sign-in is NOT connected to a server yet. While you run `ng serve` (development
- * mode) login() lets any username and password in so you can preview the admin pages. In a
- * production build (`ng build`) it always fails until you replace it. There are deliberately
- * no admin credentials in this front-end code: anything shipped to the browser can be read
- * by anyone.
- *
- * TODO (API): POST the username and password to your backend over HTTPS. The server
- * must check them (hashed passwords), rate-limit or lock out repeated failures, ideally
- * require a second factor, and answer with a session cookie (httpOnly) or token. Return
- * { ok: true } on success, or { ok: false, reason } with a generic message such as
- * "Invalid username or password" (never say which one was wrong). Every admin API call
- * must be authorised again on the server; this page and the route guard only hide the UI.
+ * Admin / Employee sign-in against the API (POST /api/admin/auth/login). The server checks
+ * the password and the role; the token it returns is sent with every admin request by the
+ * auth interceptor. The token lives in sessionStorage, so it is gone when the tab closes.
+ * Every admin API call is checked again on the server; the route guard only hides the UI.
  */
 @Injectable({ providedIn: 'root' })
 export class AdminAuthService {
-  readonly admin = signal<{ username: string } | null>(this.read());
+  private readonly http = inject(HttpClient);
 
-  login(username: string, _password: string): Observable<AdminLoginResult> {
-    void username;
-    // TODO: remove this development shortcut when the real login is connected.
-    if (isDevMode()) {
-      return of<AdminLoginResult>({ ok: true }).pipe(delay(300));
-    }
-    return of<AdminLoginResult>({
-      ok: false,
-      reason: 'Admin sign-in is not connected to the server yet.',
-    }).pipe(delay(500));
+  readonly admin = signal<AdminSession | null>(this.read());
+
+  /** The token to send to the API, or null when signed out or expired. */
+  token(): string | null {
+    const s = this.admin();
+    return s && this.isLive(s) ? s.token : null;
   }
 
-  /** Call this once the server has accepted the login. */
-  startSession(username: string): void {
-    this.admin.set({ username });
-    try {
-      sessionStorage.setItem(ADMIN_KEY, JSON.stringify({ username }));
-    } catch {
-      /* storage unavailable */
+  /** True while there is a signed-in admin whose token has not expired. */
+  isSignedIn(): boolean {
+    const s = this.admin();
+    if (s && !this.isLive(s)) {
+      this.signOut();
+      return false;
     }
+    return s !== null;
+  }
+
+  login(username: string, password: string): Observable<AdminLoginResult> {
+    return this.http
+      .post<LoginResponse>(`${API_URL}/admin/auth/login`, { userName: username.trim(), password })
+      .pipe(
+        map((res): AdminLoginResult => {
+          this.startSession({
+            username: username.trim(),
+            name: res.name,
+            token: res.token,
+            expiresAt: res.expiresAtUtc,
+          });
+          return { ok: true };
+        }),
+        catchError((err: HttpErrorResponse) => of<AdminLoginResult>({ ok: false, reason: this.reason(err) })),
+      );
   }
 
   signOut(): void {
@@ -54,10 +75,40 @@ export class AdminAuthService {
     this.admin.set(null);
   }
 
-  private read(): { username: string } | null {
+  private startSession(session: AdminSession): void {
+    this.admin.set(session);
+    try {
+      sessionStorage.setItem(ADMIN_KEY, JSON.stringify(session));
+    } catch {
+      /* storage unavailable: the session still works until the page is reloaded */
+    }
+  }
+
+  private reason(err: HttpErrorResponse): string {
+    if (err.status === 0) {
+      return 'Cannot reach the server. Please check that the API is running.';
+    }
+    if (err.status === 423) {
+      return 'Too many attempts. Please try again in a few minutes.';
+    }
+    if (err.status === 401) {
+      return 'Invalid username or password.';
+    }
+    return 'Something went wrong. Please try again.';
+  }
+
+  private isLive(s: AdminSession): boolean {
+    return new Date(s.expiresAt).getTime() > Date.now();
+  }
+
+  private read(): AdminSession | null {
     try {
       const raw = sessionStorage.getItem(ADMIN_KEY);
-      return raw ? (JSON.parse(raw) as { username: string }) : null;
+      if (!raw) {
+        return null;
+      }
+      const s = JSON.parse(raw) as AdminSession;
+      return s.token && this.isLive(s) ? s : null;
     } catch {
       return null;
     }

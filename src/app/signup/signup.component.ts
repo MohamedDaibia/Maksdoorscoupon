@@ -1,7 +1,7 @@
 import { Component, OnDestroy, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { RouterLink } from '@angular/router';
-import { SessionService } from '../session.service';
+import { Router, RouterLink } from '@angular/router';
+import { CarpenterAuthService } from '../auth/carpenter-auth.service';
 import { INDIA_LOCATIONS } from './india-locations';
 
 type FieldName = 'photo' | 'name' | 'phone' | 'password' | 'state' | 'district' | 'postalCode';
@@ -14,12 +14,14 @@ type FieldName = 'photo' | 'name' | 'phone' | 'password' | 'state' | 'district' 
 })
 export class SignupComponent implements OnDestroy {
   private readonly fb = inject(FormBuilder);
-  private readonly session = inject(SessionService);
+  private readonly auth = inject(CarpenterAuthService);
+  private readonly router = inject(Router);
 
   readonly states = Object.keys(INDIA_LOCATIONS);
   districts: string[] = [];
   showPassword = false;
-  submitted = false;
+  submitting = false;
+  error = '';
   photoPreview: string | null = null;
   photoError = '';
 
@@ -102,57 +104,21 @@ export class SignupComponent implements OnDestroy {
     this.photoPreview = url;
   }
 
-  async onSubmit(): Promise<void> {
-    this.submitted = false;
+  onSubmit(): void {
+    this.error = '';
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;
     }
 
-    // DEMO: remember the registration (with a small copy of the photo) in this browser so
-    // sign in, the coupon page and the admin Carpenters list can use it.
-    // TODO: send the form to your backend over HTTPS. Because of the photo, use
-    // FormData (append each field plus the photo File) instead of plain JSON.
-    // Never log or store the plain password.
-    const { name, phone, photo, state, district, postalCode } = this.form.getRawValue();
-    const photoUrl = photo ? await this.toAvatarDataUrl(photo) : null;
-    this.session.saveRegistration({
-      name,
-      phone,
-      photoUrl,
-      state,
-      district,
-      postalCode,
-      registeredAt: new Date().toISOString(),
-    });
-    this.submitted = true;
-  }
-
-  /** Crops the photo to a centred square and shrinks it to 256px for the profile picture. */
-  private async toAvatarDataUrl(file: File): Promise<string | null> {
-    const url = URL.createObjectURL(file);
-    try {
-      const img = await new Promise<HTMLImageElement>((resolve, reject) => {
-        const i = new Image();
-        i.onload = () => resolve(i);
-        i.onerror = reject;
-        i.src = url;
-      });
-      const size = 256;
-      const canvas = document.createElement('canvas');
-      canvas.width = size;
-      canvas.height = size;
-      const ctx = canvas.getContext('2d');
-      if (!ctx) {
-        return null;
+    this.submitting = true;
+    this.auth.register(this.form.getRawValue()).subscribe((result) => {
+      this.submitting = false;
+      if (result.ok) {
+        this.router.navigateByUrl('/coupon'); // the API has signed the new carpenter in
+      } else {
+        this.error = result.reason;
       }
-      const side = Math.min(img.width, img.height);
-      ctx.drawImage(img, (img.width - side) / 2, (img.height - side) / 2, side, side, 0, 0, size, size);
-      return canvas.toDataURL('image/jpeg', 0.85);
-    } catch {
-      return null;
-    } finally {
-      URL.revokeObjectURL(url);
-    }
+    });
   }
 }

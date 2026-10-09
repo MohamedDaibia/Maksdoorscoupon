@@ -10,7 +10,7 @@
       <div class="banner success" role="status">{{ claimedMessage() }}</div>
     }
 
-    <form (ngSubmit)="onClaim()" autocomplete="off">
+    <form (submit)="$event.preventDefault(); onClaim()" autocomplete="off">
       <input class="coupon-input" type="text" name="coupon" [formControl]="code"
              placeholder="Enter your coupon" aria-label="Coupon number"
              autocomplete="off" autocapitalize="characters" spellcheck="false"

@@ -24,6 +24,7 @@
           <tr>
             <th scope="col">Coupon number</th>
             <th scope="col">Claimed date &amp; time</th>
+            <th scope="col">Paid date &amp; time</th>
             <th scope="col">Status</th>
           </tr>
         </thead>
@@ -32,6 +33,9 @@
             <tr>
               <td data-label="Coupon number" class="code">{{ c.code }}</td>
               <td data-label="Claimed on">{{ c.claimedAt | date: 'd MMM y, h:mm a' }}</td>
+              <td data-label="Paid on">
+                @if (c.paidAt) { {{ c.paidAt | date: 'd MMM y, h:mm a' }} } @else { - }
+              </td>
               <td data-label="Status">
                 <span class="badge status-paid">{{ c.status }}</span>
               </td>

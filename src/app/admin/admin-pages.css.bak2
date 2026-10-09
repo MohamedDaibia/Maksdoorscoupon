@@ -27,30 +27,6 @@ h1 { margin: 0; font-size: 28px; color: #3b2a1a; }
 .tab-count { margin-left: 4px; color: #7a6a5a; font-weight: 700; }
 .tab.active .tab-count { color: #b9722d; }
 
-/* ---------- Tabs row with the Print button at the right end ---------- */
-.tabs-bar { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 18px; }
-.tabs-bar .tabs { margin-bottom: 0; }
-.print-btn {
-  margin-left: auto; padding: 11px 24px; border-radius: 10px; cursor: pointer;
-  border: 1.5px solid #b9722d; background: #fff; color: #8a4b14; font-size: 14px; font-weight: 700;
-}
-.print-btn:hover, .print-btn.active { background: #b9722d; color: #fff; }
-
-/* ---------- Print panel ---------- */
-.print-panel { margin-bottom: 20px; }
-.print-top { display: flex; align-items: center; flex-wrap: wrap; gap: 10px 12px; margin-bottom: 14px; }
-.print-info { color: #7a6a5a; font-size: 13px; }
-.print-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
-.print-card {
-  display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 14px 8px;
-  background: #fff; border: 1.5px dashed #b9722d; border-radius: 12px; text-align: center;
-}
-.print-brand { font-size: 10px; font-weight: 700; letter-spacing: .5px; text-transform: uppercase; color: #8a4b14; }
-.print-code { font-family: Consolas, monospace; font-size: 16px; letter-spacing: 1.5px; max-width: 100%; overflow-wrap: anywhere; color: #2a1d12; }
-.print-val { font-size: 12px; color: #7a6a5a; }
-
-@media (max-width: 600px) { .print-grid { grid-template-columns: repeat(2, 1fr); } }
-
 /* ---------- Table ---------- */
 .table-wrap { overflow-x: auto; }
 .stack { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; }

@@ -7,8 +7,8 @@ import { API_URL } from '../../api.config';
 import { CouponService } from '../../coupon/coupon.service';
 import { AdminAuthService } from '../admin-auth.service';
 
-/** How many coupons the "Generate 120 coupon" button creates. */
-const BULK_COUNT = 120;
+/** How many coupons the "Generate 100 coupon" button creates. */
+const BULK_COUNT = 100;
 
 @Component({
   selector: 'app-add-coupon',
@@ -77,7 +77,7 @@ export class AddCouponComponent implements OnInit {
   readonly total = computed(() => this.coupons.dbTotal());
   readonly busy = signal(false);
 
-  // ---- Generate 120 coupons (progress comes live over SignalR) ----
+  // ---- Generate 100 coupons (progress comes live over SignalR) ----
   readonly bulkCount = BULK_COUNT;
   readonly bulkRunning = signal(false);
   readonly bulkDone = signal(0);

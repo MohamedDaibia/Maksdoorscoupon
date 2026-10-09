@@ -8,11 +8,7 @@
       <h1>Create your account</h1>
       <p class="subtitle">Join the club and start collecting your coupons.</p>
 
-      @if (submitted) {
-        <div class="success" role="status">
-          Your details look good. You can now sign in. (Connect the form to your API to save accounts for real.)
-        </div>
-      }
+      @if (error) { <div class="error" role="alert">{{ error }}</div> }
 
       <div class="field">
         <label for="photo">Photo</label>
@@ -104,7 +100,7 @@
         @if (invalid('postalCode')) { <small>Enter a valid 6-digit postal code.</small> }
       </div>
 
-      <button type="submit" class="submit">Sign Up</button>
+      <button type="submit" class="submit" [disabled]="submitting">{{ submitting ? 'Creating account…' : 'Sign Up' }}</button>
       <p class="alt">Already have an account? <a routerLink="/login">Sign in</a></p>
     </form>
   </section>

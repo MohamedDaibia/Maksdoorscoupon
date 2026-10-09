@@ -3,7 +3,6 @@
 
 .page {
   min-height: 100vh;
-  min-height: 100dvh;
   display: flex;
   flex-direction: column;
   font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
@@ -70,22 +69,10 @@ h1 { margin: 0; font-size: 32px; }
 .claim:disabled { opacity: .45; cursor: not-allowed; }
 
 @media (max-width: 600px) {
-  .main { padding: 28px 16px 150px; }
-  h1 { font-size: 24px; line-height: 1.25; }
-  .subtitle { margin: 6px 0 22px; font-size: 14px; }
-  .coupon-input { font-size: 22px; padding: 18px 12px; letter-spacing: 2px; border-radius: 14px; }
-  .coupon-input::placeholder { font-size: 18px; }
-  .status { font-size: 14px; }
+  .main { padding: 40px 16px 140px; }
+  h1 { font-size: 26px; }
+  .coupon-input { font-size: 24px; padding: 22px 14px; letter-spacing: 2px; }
   .bottombar { padding-left: 16px; padding-right: 16px; }
-  .claim { padding: 16px; }
-  .door-photo { margin-top: 22px; padding: 16px; }
-  .door-frame { max-height: 240px; }
-  .door-buttons .photo-btn { flex: 1 1 130px; }
-}
-@media (max-width: 360px) {
-  h1 { font-size: 22px; }
-  .coupon-input { font-size: 20px; letter-spacing: 1px; }
-  .coupon-input::placeholder { font-size: 16px; }
 }
 
 /* ---------- Door photo ---------- */

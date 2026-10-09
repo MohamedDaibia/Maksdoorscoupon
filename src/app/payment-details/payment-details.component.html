@@ -1,0 +1,83 @@
+<div class="page">
+  <app-header />
+
+  <main class="main">
+    <h1>Payment settings</h1>
+    <p class="owner">{{ user()?.name }}</p>
+
+    <form class="form" [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+      <p class="intro">Add at least one way to be paid: complete bank details, a UPI id, a Google Pay number or a PhonePe number.</p>
+      @if (loadError()) { <div class="error" role="alert">{{ loadError() }}</div> }
+      @if (saveError()) { <div class="error" role="alert">{{ saveError() }}</div> }
+      @if (showMethodError()) {
+        <div class="error" role="alert">Please add bank details, a UPI id, a Google Pay number or a PhonePe number to save.</div>
+      }
+      <section class="card">
+        <h2>Bank details</h2>
+        @if (showBankError()) {
+          <small class="block">Bank details need the account number, holder name and IFSC code together.</small>
+        }
+
+        <div class="field">
+          <label for="accountNumber">A/c Number</label>
+          <input id="accountNumber" type="text" formControlName="accountNumber" inputmode="numeric"
+                 maxlength="18" autocomplete="off" placeholder="Account number" />
+          @if (invalid('accountNumber')) { <small>Enter 9 to 18 digits.</small> }
+        </div>
+
+        <div class="field">
+          <label for="accountHolderName">A/c Holder name</label>
+          <input id="accountHolderName" type="text" formControlName="accountHolderName"
+                 maxlength="100" autocomplete="off" placeholder="Name as on the bank account" />
+        </div>
+
+        <div class="row">
+          <div class="field">
+            <label for="branch">Branch</label>
+            <input id="branch" type="text" formControlName="branch" maxlength="100"
+                   autocomplete="off" placeholder="Branch name" />
+          </div>
+
+          <div class="field">
+            <label for="ifsc">IFSC code</label>
+            <input id="ifsc" type="text" formControlName="ifsc" maxlength="11" class="upper"
+                   autocomplete="off" placeholder="e.g. SBIN0001234" />
+            @if (invalid('ifsc')) { <small>Enter a valid 11-character IFSC code.</small> }
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>UPI</h2>
+
+        <div class="field">
+          <label for="upiId">UPI id</label>
+          <input id="upiId" type="text" formControlName="upiId" autocomplete="off"
+                 placeholder="name@bank" />
+          @if (invalid('upiId')) { <small>Enter a valid UPI id, like name&#64;bank.</small> }
+        </div>
+
+        <div class="row">
+          <div class="field">
+            <label for="googlePayNumber">Google Pay number</label>
+            <input id="googlePayNumber" type="tel" formControlName="googlePayNumber" inputmode="numeric"
+                   maxlength="10" autocomplete="off" placeholder="10-digit number" />
+            @if (invalid('googlePayNumber')) { <small>Enter a 10-digit number.</small> }
+          </div>
+
+          <div class="field">
+            <label for="phonePeNumber">PhonePe number</label>
+            <input id="phonePeNumber" type="tel" formControlName="phonePeNumber" inputmode="numeric"
+                   maxlength="10" autocomplete="off" placeholder="10-digit number" />
+            @if (invalid('phonePeNumber')) { <small>Enter a 10-digit number.</small> }
+          </div>
+        </div>
+      </section>
+
+      <div class="actions">
+        <button type="submit" class="save" [disabled]="busy()">{{ busy() ? 'Saving…' : 'Save' }}</button>
+        @if (saved()) { <span class="note" role="status">Payment settings saved.</span> }
+      </div>
+    </form>
+  </main>
+</div>

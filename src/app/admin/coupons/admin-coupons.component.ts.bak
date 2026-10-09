@@ -1,5 +1,4 @@
 import { DatePipe } from '@angular/common';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit, computed, effect, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { PagerComponent } from '../pager.component';
@@ -9,7 +8,6 @@ import {
   CouponState,
   PaymentType,
 } from '../../coupon/coupon.service';
-import { API_URL } from '../../api.config';
 import { AdminCarpenter, AdminCarpentersService } from '../carpenters/admin-carpenters.service';
 
 type Filter = 'all' | 'unclaimed' | 'unpaid' | 'paid';
@@ -30,51 +28,16 @@ type Filter = 'all' | 'unclaimed' | 'unpaid' | 'paid';
       <div class="stat"><span class="stat-label">Paid</span><span class="stat-value">{{ coupons.dbSummary().paid }}</span></div>
     </div>
 
-    <div class="tabs-bar">
-      <div class="tabs" role="tablist" aria-label="Filter coupons">
-        @for (t of tabs; track t.key) {
-          <button type="button" role="tab" class="tab" [class.active]="!printOpen() && coupons.dbStatus() === t.key"
-                  [attr.aria-selected]="!printOpen() && coupons.dbStatus() === t.key" (click)="selectTab(t.key)">
-            {{ t.label }}
-          </button>
-        }
-      </div>
-      <button type="button" class="print-btn" [class.active]="printOpen()" (click)="openPrint()">Print</button>
+    <div class="tabs" role="tablist" aria-label="Filter coupons">
+      @for (t of tabs; track t.key) {
+        <button type="button" role="tab" class="tab" [class.active]="coupons.dbStatus() === t.key"
+                [attr.aria-selected]="coupons.dbStatus() === t.key" (click)="selectTab(t.key)">
+          {{ t.label }}
+        </button>
+      }
     </div>
 
-    @if (printOpen()) {
-      <section class="print-panel" aria-label="Print coupons">
-        <div class="print-top">
-          <button type="button" class="cta" (click)="startPrinting()"
-                  [disabled]="printing() || printLoading() || printItems().length === 0">
-            {{ printing() ? 'Printing…' : 'Start printing' }}
-          </button>
-          <button type="button" class="ghost" (click)="closePrint()" [disabled]="printing()">Close</button>
-          <span class="print-info">
-            {{ printItems().length }} to print now · {{ printTotal() }} unprinted in all
-          </span>
-        </div>
-
-        @if (printNote()) { <p class="bulk-ok" role="status">{{ printNote() }}</p> }
-        @if (printError()) { <p class="error" role="alert">{{ printError() }}</p> }
-
-        @if (printLoading()) {
-          <div class="empty"><p>Loading unprinted coupons…</p></div>
-        } @else if (printItems().length === 0) {
-          <div class="empty"><p>All coupons have been printed.</p></div>
-        } @else {
-          <div class="print-grid">
-            @for (c of printItems(); track c.code) {
-              <div class="print-card">
-                <span class="print-brand">Maksdoors Coupon</span>
-                <strong class="print-code">{{ c.code }}</strong>
-                <span class="print-val">Worth ₹{{ c.value }}</span>
-              </div>
-            }
-          </div>
-        }
-      </section>
-    } @else if (coupons.dbError()) {
+    @if (coupons.dbError()) {
       <div class="empty"><p role="alert">{{ coupons.dbError() }}</p></div>
     } @else if (rows().length === 0 && coupons.dbLoading()) {
       <div class="empty"><p>Loading coupons…</p></div>
@@ -154,16 +117,6 @@ type Filter = 'all' | 'unclaimed' | 'unpaid' | 'paid';
 })
 export class AdminCouponsComponent implements OnInit {
   protected readonly coupons = inject(CouponService);
-  private readonly http = inject(HttpClient);
-
-  // ---- Print: the next 100 coupons that have never been printed ----
-  readonly printOpen = signal(false);
-  readonly printItems = signal<{ code: string; value: number }[]>([]);
-  readonly printTotal = signal(0);
-  readonly printLoading = signal(false);
-  readonly printing = signal(false);
-  readonly printError = signal('');
-  readonly printNote = signal('');
   private readonly carpenterApi = inject(AdminCarpentersService);
   /** Name and address of the carpenters who claimed coupons on this page (asked from the server). */
   private readonly people = signal<AdminCarpenter[]>([]);
@@ -219,128 +172,8 @@ export class AdminCouponsComponent implements OnInit {
     { key: 'paid', label: 'Paid' },
   ];
 
-  openPrint(): void {
-    this.closeDrawer();
-    this.printNote.set('');
-    this.printOpen.set(true);
-    this.loadUnprinted();
-  }
-
-  closePrint(): void {
-    if (this.printing()) {
-      return;
-    }
-    this.printOpen.set(false);
-    this.printError.set('');
-    this.printNote.set('');
-  }
-
-  private loadUnprinted(): void {
-    this.printLoading.set(true);
-    this.printError.set('');
-    this.http
-      .get<{ items: { code: string; value: number }[]; total: number }>(`${API_URL}/admin/coupons/unprinted`, {
-        params: { count: 120 },
-      })
-      .subscribe({
-        next: (res) => {
-          this.printItems.set(res.items);
-          this.printTotal.set(res.total);
-          this.printLoading.set(false);
-        },
-        error: (err: HttpErrorResponse) => {
-          this.printItems.set([]);
-          this.printError.set(
-            err.status === 0
-              ? 'Cannot reach the server. Please check that the API is running.'
-              : 'Could not load the coupons to print.',
-          );
-          this.printLoading.set(false);
-        },
-      });
-  }
-
-  /** Opens the print dialog for the listed coupons, then marks them printed and shows the next unprinted ones. */
-  async startPrinting(): Promise<void> {
-    const items = this.printItems();
-    if (this.printing() || items.length === 0) {
-      return;
-    }
-    this.printing.set(true);
-    this.printError.set('');
-    this.printNote.set('');
-
-    await this.printCards(items);
-
-    this.http.post<{ marked: number }>(`${API_URL}/admin/coupons/print`, { codes: items.map((i) => i.code) }).subscribe({
-      next: (res) => {
-        this.printing.set(false);
-        this.printItems.set([]); // hide the printed list
-        this.printNote.set(`${res.marked} coupons marked as printed.`);
-        this.loadUnprinted(); // show what is still unprinted
-      },
-      error: (err: HttpErrorResponse) => {
-        this.printing.set(false);
-        this.printError.set(
-          (err.error as { error?: string } | null)?.error ?? 'Printed, but the coupons could not be marked as printed. Please try again.',
-        );
-      },
-    });
-  }
-
-  /** Prints the cards from a hidden frame (no pop-up to get blocked). Resolves when the print dialog closes. */
-  private printCards(items: { code: string; value: number }[]): Promise<void> {
-    const esc = (t: string) => t.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]!);
-    // A4 page: 4 columns x 10 rows = 40 coupons per page.
-    const perPage = 40;
-    let pages = '';
-    for (let i = 0; i < items.length; i += perPage) {
-      const cards = items
-        .slice(i, i + perPage)
-        .map(
-          (c) => `<div class="card"><div class="brand">Maksdoors Coupon</div>
-          <div class="code">${esc(c.code)}</div><div class="val">Worth ₹${c.value}</div></div>`,
-        )
-        .join('');
-      pages += `<div class="page"><div class="grid">${cards}</div></div>`;
-    }
-    const html = `<!doctype html><html><head><meta charset="utf-8"><title>Maksdoors coupons</title><style>
-      @page { size: A4; margin: 10mm; }
-      * { box-sizing: border-box; }
-      body { margin: 0; font-family: 'Segoe UI', Roboto, Arial, sans-serif; color: #3b2a1a; }
-      .page { height: 277mm; break-after: page; }
-      .page:last-child { break-after: auto; }
-      .grid { height: 100%; display: grid; grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(10, 1fr); gap: 3mm; }
-      .card { border: 1.2px dashed #8a4b14; border-radius: 2mm; padding: 1mm 2mm; text-align: center;
-              display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; }
-      .brand { font-size: 8px; font-weight: 700; color: #8a4b14; letter-spacing: .4px; text-transform: uppercase; }
-      .code { margin: 3px 0 2px; font-size: 15px; font-weight: 800; letter-spacing: 1px; font-family: Consolas, monospace; white-space: nowrap; }
-      .val { font-size: 9px; color: #7a6a5a; }
-      </style></head><body>${pages}</body></html>`;
-
-    return new Promise((resolve) => {
-      const frame = document.createElement('iframe');
-      frame.style.cssText = 'position:fixed;right:0;bottom:0;width:0;height:0;border:0;';
-      document.body.appendChild(frame);
-      const win = frame.contentWindow!;
-      win.document.open();
-      win.document.write(html);
-      win.document.close();
-      setTimeout(() => {
-        win.focus();
-        win.print(); // waits here until the dialog is closed
-        frame.remove();
-        resolve();
-      }, 300);
-    });
-  }
-
   /** A tab asks the server for that group of coupons, starting at page 1. */
   selectTab(key: Filter): void {
-    if (this.printing()) {
-      return;
-    }
-    this.printOpen.set(false);
     this.closeDrawer();
     this.coupons.loadAdminCoupons(1, this.coupons.dbPageSize(), key);
   }

@@ -14,16 +14,24 @@ export interface Carpenter extends UserProfile {
 }
 
 const USER_KEY = 'maks.user'; // sessionStorage: who is signed in in this tab
+const TOKEN_KEY = 'maks.token'; // sessionStorage: the API login token and when it expires
 const CARPENTERS_KEY = 'maks.carpenters'; // localStorage: everyone who registered
 
+interface StoredToken {
+  token: string;
+  expiresAt: string; // ISO date-time, from the server
+}
+
 /**
- * DEMO ONLY: the signed-in user lives in sessionStorage and the registered carpenters in
- * localStorage, so the signup, sign-in and admin pages work before a backend exists.
- * Replace with real authentication and API calls later. Passwords are never stored here.
+ * The signed-in carpenter and their API token live in sessionStorage (gone when the tab closes).
+ * Sign-in itself happens in CarpenterAuthService. The registered-carpenters list in localStorage
+ * is still DEMO ONLY (the admin pages read it) until the admin API provides it.
+ * Passwords are never stored here.
  */
 @Injectable({ providedIn: 'root' })
 export class SessionService {
   readonly user = signal<UserProfile | null>(this.readUser());
+  private stored: StoredToken | null = this.readToken();
   readonly carpenters = signal<Carpenter[]>(this.readCarpenters());
 
   constructor() {
@@ -46,32 +54,55 @@ export class SessionService {
     }
   }
 
-  signIn(phone: string): void {
-    const found = this.carpenters().find((c) => c.phone === phone);
-    const profile: UserProfile = found
-      ? { name: found.name, phone: found.phone, photoUrl: found.photoUrl }
-      : { name: 'Member', phone, photoUrl: null };
+  /** Called after the API accepts a sign-in or sign-up. */
+  signIn(session: { profile: UserProfile; token: string; expiresAt: string }): void {
+    this.stored = { token: session.token, expiresAt: session.expiresAt };
     try {
-      sessionStorage.setItem(USER_KEY, JSON.stringify(profile));
+      sessionStorage.setItem(USER_KEY, JSON.stringify(session.profile));
+      sessionStorage.setItem(TOKEN_KEY, JSON.stringify(this.stored));
     } catch {
-      /* storage unavailable */
+      /* storage unavailable: the session still works until the page is reloaded */
     }
-    this.user.set(profile);
+    this.user.set(session.profile);
+  }
+
+  /** The token to send to the API, or null when signed out or expired. */
+  token(): string | null {
+    if (this.stored && new Date(this.stored.expiresAt).getTime() <= Date.now()) {
+      this.signOut();
+    }
+    return this.stored?.token ?? null;
   }
 
   signOut(): void {
     try {
       sessionStorage.removeItem(USER_KEY);
+      sessionStorage.removeItem(TOKEN_KEY);
     } catch {
       /* storage unavailable */
     }
+    this.stored = null;
     this.user.set(null);
   }
 
   private readUser(): UserProfile | null {
+    // Only trust a stored user if there is a live token with it.
+    if (!this.readToken()) {
+      return null;
+    }
     try {
       const raw = sessionStorage.getItem(USER_KEY);
       return raw ? (JSON.parse(raw) as UserProfile) : null;
+    } catch {
+      return null;
+    }
+  }
+
+  private readToken(): StoredToken | null {
+    try {
+      const raw = sessionStorage.getItem(TOKEN_KEY);
+      const t = raw ? (JSON.parse(raw) as StoredToken) : null;
+      return t?.token && new Date(t.expiresAt).getTime() > Date.now() ? t : null;
     } catch {
       return null;
     }

@@ -49,7 +49,6 @@ export class AdminLoginComponent {
     this.auth.login(username, password).subscribe((result) => {
       this.busy.set(false);
       if (result.ok) {
-        this.auth.startSession(username);
         this.router.navigateByUrl('/admin');
       } else {
         this.error.set(result.reason);
