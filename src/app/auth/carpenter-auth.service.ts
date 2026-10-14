@@ -34,8 +34,8 @@ export class CarpenterAuthService {
   private readonly http = inject(HttpClient);
   private readonly session = inject(SessionService);
 
-  login(phone: string, password: string): Observable<AuthResult> {
-    return this.http.post<AuthResponse>(`${API_URL}/auth/login`, { phone: phone.trim(), password }).pipe(
+  login(phone: string): Observable<AuthResult> {
+    return this.http.post<AuthResponse>(`${API_URL}/auth/login`, { phone: phone.trim() }).pipe(
       map((res) => this.start(res, phone.trim())),
       catchError((err: HttpErrorResponse) => of<AuthResult>({ ok: false, reason: this.reason(err, 'login') })),
     );
@@ -86,7 +86,7 @@ export class CarpenterAuthService {
       return 'Too many attempts. Please try again in a few minutes.';
     }
     if (err.status === 401) {
-      return 'Invalid phone number or password.';
+      return 'No carpenter account found for this phone number.';
     }
     if (kind === 'register' && err.status === 400) {
       const first = err.error?.errors && typeof err.error.errors === 'object'

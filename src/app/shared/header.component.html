@@ -5,8 +5,10 @@
   </a>
 
   <div class="right">
+    <app-contact-badge [raised]="onCouponPage()" />
     <a class="nav-link" routerLink="/claimed" routerLinkActive="active">Claimed coupons</a>
-    <a class="nav-link" routerLink="/payment-details" routerLinkActive="active">Payment Settings</a>
+    <a class="nav-link" href="/payment-details" [class.active]="onPaymentPage()"
+       (click)="$event.preventDefault(); openPasswordPrompt()">Payment Settings</a>
 
     <div class="profile">
       <button type="button" class="dp" (click)="menuOpen.set(!menuOpen())"
@@ -27,3 +29,23 @@
     </div>
   </div>
 </header>
+
+@if (pwOpen()) {
+  <div class="modal-backdrop">
+    <form class="modal" role="dialog" aria-modal="true" aria-labelledby="pw-title"
+          (click)="$event.stopPropagation()" (ngSubmit)="submitPassword()" (keydown.escape)="closePasswordPrompt()">
+      <h2 id="pw-title">Enter your password</h2>
+      <p>For your security, please confirm your password to open Payment Settings.</p>
+      <div class="pw-wrap">
+        <input name="pw" [type]="showPw() ? 'text' : 'password'" [(ngModel)]="pwValue"
+               autocomplete="current-password" placeholder="Your password" autofocus />
+        <button type="button" class="pw-toggle" (click)="showPw.set(!showPw())">{{ showPw() ? 'Hide' : 'Show' }}</button>
+      </div>
+      @if (pwError()) { <div class="pw-error" role="alert">{{ pwError() }}</div> }
+      <div class="modal-actions">
+        <button type="button" class="btn-cancel" (click)="closePasswordPrompt()">Cancel</button>
+        <button type="submit" class="btn-ok" [disabled]="pwBusy()">{{ pwBusy() ? 'Checking…' : 'Continue' }}</button>
+      </div>
+    </form>
+  </div>
+}

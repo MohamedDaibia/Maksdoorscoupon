@@ -2,11 +2,12 @@
   <app-header />
 
   <main class="main">
-    <h1>Payment settings</h1>
+    <h1>{{ setup ? 'Add your payment details' : 'Payment settings' }}</h1>
     <p class="owner">{{ user()?.name }}</p>
 
     <form class="form" [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
-      <p class="intro">Add at least one way to be paid: complete bank details, a UPI id, a Google Pay number or a PhonePe number.</p>
+      <p class="intro">@if (setup) { Welcome! Please add your payment details to continue to your coupons. }
+        Add at least one way to be paid: complete bank details, a UPI id, a Google Pay number or a PhonePe number.</p>
       @if (loadError()) { <div class="error" role="alert">{{ loadError() }}</div> }
       @if (saveError()) { <div class="error" role="alert">{{ saveError() }}</div> }
       @if (showMethodError()) {

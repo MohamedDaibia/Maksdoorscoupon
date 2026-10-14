@@ -1,6 +1,7 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { AbstractControl, FormBuilder, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import { API_URL } from '../api.config';
 import { HeaderComponent } from '../shared/header.component';
 import { SessionService } from '../session.service';
@@ -42,6 +43,9 @@ function paymentMethodRequired(group: AbstractControl): ValidationErrors | null 
 export class PaymentDetailsComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly http = inject(HttpClient);
+  private readonly router = inject(Router);
+  /** True right after sign-up: saving here leads on to the coupon page. */
+  readonly setup = inject(ActivatedRoute).snapshot.queryParamMap.has('setup');
 
   readonly user = inject(SessionService).user;
   readonly saved = signal(false);
@@ -128,6 +132,9 @@ export class PaymentDetailsComponent implements OnInit {
           this.busy.set(false);
           this.saved.set(true);
           this.form.markAsPristine();
+          if (this.setup) {
+            this.router.navigateByUrl('/coupon');
+          }
         },
         error: (err: HttpErrorResponse) => {
           this.busy.set(false);

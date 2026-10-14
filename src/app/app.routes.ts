@@ -6,6 +6,8 @@ import { AdminCouponsComponent } from './admin/coupons/admin-coupons.component';
 import { AdminLoginComponent } from './admin/admin-login/admin-login.component';
 import { adminGuard } from './admin/admin.guard';
 import { authGuard } from './auth.guard';
+import { paymentSetupGuard } from './payment-setup.guard';
+import { paymentUnlockGuard } from './payment-unlock.guard';
 import { ClaimedComponent } from './claimed/claimed.component';
 import { CouponComponent } from './coupon/coupon.component';
 import { EarnedComponent } from './earned/earned.component';
@@ -17,9 +19,9 @@ export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'login' },
   { path: 'login', component: LoginComponent },
   { path: 'signup', component: SignupComponent },
-  { path: 'coupon', component: CouponComponent, canActivate: [authGuard] },
+  { path: 'coupon', component: CouponComponent, canActivate: [authGuard, paymentSetupGuard] },
   { path: 'claimed', component: ClaimedComponent, canActivate: [authGuard] },
-  { path: 'payment-details', component: PaymentDetailsComponent, canActivate: [authGuard] },
+  { path: 'payment-details', component: PaymentDetailsComponent, canActivate: [authGuard, paymentUnlockGuard] },
   { path: 'earned', component: EarnedComponent, canActivate: [authGuard] },
 
   // Admin. Angular routes are case-sensitive, so /Admin/Login is sent to /admin/login.

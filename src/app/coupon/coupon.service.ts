@@ -141,6 +141,40 @@ export class CouponService {
     this.myPaidCoupons().reduce((sum, c) => sum + c.reward, 0),
   );
 
+  /**
+   * Loads the signed-in carpenter's claims from the database (GET /api/carpenter/coupons/mine) and
+   * replaces this carpenter's copy kept in the browser, so the lists match what the server has.
+   */
+  loadMyClaims(): void {
+    const phone = this.session.user()?.phone;
+    if (!phone) {
+      return;
+    }
+    this.http
+      .get<{ code: string; value: number; claimedAt: string; status: string; paidVia: string | null; paidAt: string | null }[]>(
+        `${API_URL}/carpenter/coupons/mine`,
+      )
+      .subscribe({
+        next: (rows) => {
+          const utc = (d: string) => (d.endsWith('Z') ? d : d + 'Z');
+          const mine: ClaimedCoupon[] = rows.map((r) => ({
+            code: r.code,
+            reward: r.value,
+            claimedAt: utc(r.claimedAt),
+            status: r.status === 'Paid' ? 'Paid' : 'Pending',
+            phone,
+            paidType: (r.paidVia ?? undefined) as PaymentType | undefined,
+            paidAt: r.paidAt ? utc(r.paidAt) : undefined,
+          }));
+          this.allClaims.update((list) => [...mine, ...list.filter((c) => c.phone !== phone)]);
+          this.write(CLAIMS_KEY, this.allClaims());
+        },
+        error: () => {
+          /* keep showing what this browser already has */
+        },
+      });
+  }
+
   /** Admin: the coupons one carpenter has claimed (from the claims kept in this browser), newest first. */
   claimsOf(phone: string): ClaimedCoupon[] {
     return this.allClaims().filter((c) => c.phone === phone);

@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { CouponService } from '../coupon/coupon.service';
 import { HeaderComponent } from '../shared/header.component';
@@ -11,10 +11,14 @@ import { SessionService } from '../session.service';
   templateUrl: './earned.component.html',
   styleUrl: './earned.component.css',
 })
-export class EarnedComponent {
+export class EarnedComponent implements OnInit {
   private readonly coupons = inject(CouponService);
 
   readonly user = inject(SessionService).user;
+
+  ngOnInit(): void {
+    this.coupons.loadMyClaims();
+  }
 
   /** Coupons that have already been paid. */
   readonly paid = this.coupons.myPaidCoupons;

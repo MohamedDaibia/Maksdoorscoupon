@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common';
-import { Component, computed, inject } from '@angular/core';
+import { Component, OnInit, computed, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { CouponService } from '../coupon/coupon.service';
 import { HeaderComponent } from '../shared/header.component';
@@ -11,10 +11,14 @@ import { SessionService } from '../session.service';
   templateUrl: './claimed.component.html',
   styleUrl: './claimed.component.css',
 })
-export class ClaimedComponent {
+export class ClaimedComponent implements OnInit {
   private readonly coupons = inject(CouponService);
 
   readonly user = inject(SessionService).user;
+
+  ngOnInit(): void {
+    this.coupons.loadMyClaims();
+  }
 
   /** Only coupons still waiting to be paid. */
   readonly pending = this.coupons.myPendingCoupons;

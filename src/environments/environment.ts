@@ -5,5 +5,5 @@
  */
 export const environment = {
   production: true,
-  apiUrl: '/api',
+  apiUrl: 'https://coupon.maksdoors.in/api',
 };

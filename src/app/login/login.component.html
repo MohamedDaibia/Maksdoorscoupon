@@ -1,4 +1,5 @@
 <div class="page">
+  <app-contact-badge [floating]="true" />
   <img class="corner-logo" src="maks-logo-small.png" alt="MAKS - Finest Craftsmanship" />
 
   <!-- LEFT: form -->
@@ -15,17 +16,6 @@
         @if (invalid('phone')) { <small>Enter a valid 10-digit mobile number.</small> }
       </div>
 
-      <div class="field">
-        <label for="password">Password</label>
-        <div class="password-wrap">
-          <input id="password" [type]="showPassword ? 'text' : 'password'" formControlName="password"
-                 autocomplete="current-password" placeholder="Your password" />
-          <button type="button" class="toggle" (click)="showPassword = !showPassword">
-            {{ showPassword ? 'Hide' : 'Show' }}
-          </button>
-        </div>
-        @if (invalid('password')) { <small>Password must be at least 8 characters.</small> }
-      </div>
 
       @if (error) { <div class="error" role="alert">{{ error }}</div> }
 

@@ -1,3 +1,4 @@
+import { ContactBadgeComponent } from '../shared/contact-badge.component';
 import { Component, OnDestroy, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
@@ -8,7 +9,7 @@ type FieldName = 'photo' | 'name' | 'phone' | 'password' | 'state' | 'district' 
 
 @Component({
   selector: 'app-signup',
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [ReactiveFormsModule, RouterLink, ContactBadgeComponent],
   templateUrl: './signup.component.html',
   styleUrl: './signup.component.css',
 })
@@ -115,7 +116,7 @@ export class SignupComponent implements OnDestroy {
     this.auth.register(this.form.getRawValue()).subscribe((result) => {
       this.submitting = false;
       if (result.ok) {
-        this.router.navigateByUrl('/coupon'); // the API has signed the new carpenter in
+        this.router.navigate(['/payment-details'], { queryParams: { setup: 1 } }); // signed in by the API; payment details come next
       } else {
         this.error = result.reason;
       }
