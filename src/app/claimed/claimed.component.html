@@ -44,11 +44,16 @@
         <a class="cta" routerLink="/coupon">Redeem a coupon</a>
       </div>
     } @else {
+      @if (photoError()) {
+        <p class="photo-error" role="alert">{{ photoError() }}</p>
+      }
+
       <table class="table">
         <thead>
           <tr>
             <th scope="col">Coupon number</th>
             <th scope="col">Claimed date &amp; time</th>
+            <th scope="col">Door photo</th>
             <th scope="col">Status</th>
           </tr>
         </thead>
@@ -57,6 +62,26 @@
             <tr>
               <td data-label="Coupon number" class="code">{{ c.code }}</td>
               <td data-label="Claimed on">{{ c.claimedAt | date: 'd MMM y, h:mm a' }}</td>
+              <td data-label="Door photo" class="photo-cell">
+                <div class="photo-box">
+                @if (c.doorPhotoUrl) {
+                  <a [href]="c.doorPhotoUrl" target="_blank" rel="noopener">
+                    <img class="door-thumb" [src]="c.doorPhotoUrl" alt="Door photo for {{ c.code }}" />
+                  </a>
+                } @else {
+                  <span class="no-photo">No photo</span>
+                }
+                <label class="edit-photo" [class.busy]="uploading() === c.code">
+                  {{ uploading() === c.code ? 'Uploading…' : 'Edit' }}
+                  <input
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp"
+                    [disabled]="uploading() !== null"
+                    (change)="onPhotoPicked(c.code, $event)"
+                  />
+                </label>
+                </div>
+              </td>
               <td data-label="Status">
                 <span class="badge status-pending">{{ c.status }}</span>
               </td>

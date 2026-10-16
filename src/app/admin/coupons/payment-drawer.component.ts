@@ -72,7 +72,7 @@ import { AdminCarpentersService, CarpenterPaymentSettings } from '../carpenters/
               </select>
               @if (payError()) { <p class="err" role="alert">{{ payError() }}</p> }
               <button type="button" class="paid-btn" [disabled]="busy()" (click)="markPaid.emit(option())">
-                {{ busy() ? 'Saving…' : 'Paid' }}
+                {{ busy() ? 'Saving…' : 'Pay' }}
               </button>
             </section>
           }
@@ -85,6 +85,12 @@ import { AdminCarpentersService, CarpenterPaymentSettings } from '../carpenters/
           } @else {
           <img [src]="doorPhotoUrl()" alt="Door photo uploaded with this claim" (error)="photoFailed.set(true)" />
           <figcaption>Door photo</figcaption>
+          <div class="door-actions">
+            <a class="door-btn" [href]="doorPhotoUrl()" target="_blank" rel="noopener">See the door</a>
+            <button type="button" class="door-btn" [disabled]="downloading()" (click)="downloadDoor()">
+              {{ downloading() ? 'Downloading…' : 'Download' }}
+            </button>
+          </div>
           }
           </figure>
         } @else {
@@ -109,6 +115,16 @@ import { AdminCarpentersService, CarpenterPaymentSettings } from '../carpenters/
     .door { margin: 20px 0 0; padding-top: 16px; border-top: 1.5px solid #eadfce; }
     .door img { display: block; width: 100%; max-height: 320px; object-fit: contain; background: #000; border: 2px solid #b9722d; border-radius: 12px; }
     .door figcaption { margin-top: 6px; font-size: 13px; color: #7a6a5a; }
+    .door-actions { display: flex; gap: 8px; margin-top: 10px; }
+    .door-btn {
+      padding: 6px 14px; border: none; border-radius: 999px; color: #fff; font: inherit; font-size: 12px; font-weight: 700;
+      text-align: center; text-decoration: none; cursor: pointer; white-space: nowrap;
+      background: linear-gradient(135deg, #e0954a, #8a4b14); box-shadow: 0 3px 8px rgba(138, 75, 20, .3);
+      transition: transform .15s, box-shadow .15s, filter .15s;
+    }
+    .door-btn + .door-btn { background: linear-gradient(135deg, #3fb866, #1f7a3a); box-shadow: 0 3px 8px rgba(31, 122, 58, .3); }
+    .door-btn:hover:not(:disabled) { transform: translateY(-1px); filter: brightness(1.08); }
+    .door-btn:disabled { opacity: .6; cursor: default; }
     .who { display: flex; flex-direction: column; gap: 2px; margin-bottom: 18px; padding: 12px 14px; border-radius: 12px; background: #faf7f2; border: 1px solid #eadfce; }
     .amount { margin-top: 6px; font-weight: 700; color: #8a4b14; }
     .block { margin-bottom: 16px; }
@@ -143,6 +159,7 @@ export class PaymentDrawerComponent {
   readonly paidAt = input<string | null>(null);
   readonly doorPhotoUrl = input<string | null>(null);
   readonly photoFailed = signal(false);
+  readonly downloading = signal(false);
   readonly payError = input('');
   readonly busy = input(false);
   readonly markPaid = output<PaymentType>();
@@ -202,6 +219,30 @@ export class PaymentDrawerComponent {
         },
       });
     });
+  }
+
+  /** Saves the door photo to the computer, named after the coupon. Falls back to opening it if the download is blocked. */
+  async downloadDoor(): Promise<void> {
+    const url = this.doorPhotoUrl();
+    if (!url || this.downloading()) return;
+    this.downloading.set(true);
+    try {
+      const res = await fetch(url);
+      if (!res.ok) throw new Error('bad status');
+      const blob = await res.blob();
+      const ext = (new URL(url, document.baseURI).pathname.match(/\.(jpe?g|png|webp)$/i)?.[1] ?? 'jpg').toLowerCase();
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = `door-${this.code()}.${ext}`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      setTimeout(() => URL.revokeObjectURL(link.href), 1000);
+    } catch {
+      window.open(url, '_blank', 'noopener');
+    } finally {
+      this.downloading.set(false);
+    }
   }
 
   copy(value: string): void {

@@ -66,9 +66,15 @@ type Filter = 'all' | 'unclaimed' | 'unpaid' | 'paid';
           <div class="print-grid">
             @for (c of printItems(); track c.code) {
               <div class="print-card">
-                <span class="print-brand">Maksdoors Coupon</span>
-                <strong class="print-code">{{ c.code }}</strong>
-                <span class="print-val">Worth ₹{{ c.value }}</span>
+                <img class="print-qr" src="qrcode_coupon.maksdoors.png" alt="QR code" />
+                <div class="print-right">
+                  <span class="print-hint">Scan QR Code and enter the coupon below</span>
+                  <div class="print-text">
+                    <strong class="print-code">{{ c.code }}</strong>
+                    <span class="print-val">Worth ₹{{ c.value }}</span>
+                  </div>
+                  <span class="print-url">www.coupon.maksdoors.in</span>
+                </div>
               </div>
             }
           </div>
@@ -291,15 +297,18 @@ export class AdminCouponsComponent implements OnInit {
   /** Prints the cards from a hidden frame (no pop-up to get blocked). Resolves when the print dialog closes. */
   private printCards(items: { code: string; value: number }[]): Promise<void> {
     const esc = (t: string) => t.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]!);
-    // A4 page: 4 columns x 10 rows = 40 coupons per page.
-    const perPage = 40;
+    // A4 page: 2 columns x 10 rows = 20 coupons per page.
+    const perPage = 20;
+    const qr = new URL('qrcode_coupon.maksdoors.png', document.baseURI).href;
     let pages = '';
     for (let i = 0; i < items.length; i += perPage) {
       const cards = items
         .slice(i, i + perPage)
         .map(
-          (c) => `<div class="card"><div class="brand">Maksdoors Coupon</div>
-          <div class="code">${esc(c.code)}</div><div class="val">Worth ₹${c.value}</div></div>`,
+          (c) => `<div class="card"><img class="qr" src="${qr}" alt="">
+          <div class="right"><div class="hint">Scan QR Code and enter the coupon below</div>
+          <div class="txt"><div class="code">${esc(c.code)}</div><div class="val">Worth ₹${c.value}</div></div>
+          <div class="url">www.coupon.maksdoors.in</div></div></div>`,
         )
         .join('');
       pages += `<div class="page"><div class="grid">${cards}</div></div>`;
@@ -310,12 +319,16 @@ export class AdminCouponsComponent implements OnInit {
       body { margin: 0; font-family: 'Segoe UI', Roboto, Arial, sans-serif; color: #3b2a1a; }
       .page { height: 277mm; break-after: page; }
       .page:last-child { break-after: auto; }
-      .grid { height: 100%; display: grid; grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(10, 1fr); gap: 3mm; }
-      .card { border: 1.2px dashed #8a4b14; border-radius: 2mm; padding: 1mm 2mm; text-align: center;
-              display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; }
-      .brand { font-size: 8px; font-weight: 700; color: #8a4b14; letter-spacing: .4px; text-transform: uppercase; }
-      .code { margin: 3px 0 2px; font-size: 15px; font-weight: 800; letter-spacing: 1px; font-family: Consolas, monospace; white-space: nowrap; }
-      .val { font-size: 9px; color: #7a6a5a; }
+      .grid { height: 100%; display: grid; grid-template-columns: repeat(2, 1fr); grid-template-rows: repeat(10, 1fr); gap: 3mm; }
+      .card { border: 1.2px dashed #8a4b14; border-radius: 2mm; padding: 1mm 2mm; gap: 2mm;
+              display: flex; flex-direction: row; align-items: center; justify-content: flex-start; overflow: hidden; }
+      .right { flex: 1; align-self: stretch; display: flex; flex-direction: column; align-items: center; justify-content: space-between; text-align: center; padding: .5mm 0; min-width: 0; }
+      .hint { font-size: 8px; font-weight: 600; color: #8a4b14; white-space: nowrap; }
+      .url { font-size: 9px; font-weight: 700; color: #8a4b14; white-space: nowrap; }
+            .qr { height: 23mm; width: 23mm; object-fit: contain; flex: none; }
+      .txt { display: flex; flex-direction: column; justify-content: center; min-width: 0; text-align: center; }
+      .code { font-size: 22px; font-weight: 900; letter-spacing: 1px; font-family: Consolas, monospace; white-space: nowrap; }
+      .val { margin-top: 2px; font-size: 10px; color: #7a6a5a; white-space: nowrap; }
       </style></head><body>${pages}</body></html>`;
 
     return new Promise((resolve) => {
@@ -326,12 +339,17 @@ export class AdminCouponsComponent implements OnInit {
       win.document.open();
       win.document.write(html);
       win.document.close();
-      setTimeout(() => {
+      // Wait until the QR image has loaded (or failed) so it appears on every coupon.
+      const img = win.document.querySelector('img');
+      const imgReady = img && !img.complete
+        ? new Promise<void>((r) => { img.onload = () => r(); img.onerror = () => r(); })
+        : Promise.resolve();
+      imgReady.then(() => setTimeout(() => {
         win.focus();
         win.print(); // waits here until the dialog is closed
         frame.remove();
         resolve();
-      }, 300);
+      }, 300));
     });
   }
 

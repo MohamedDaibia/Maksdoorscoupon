@@ -23,6 +23,7 @@ export interface ClaimedCoupon {
   phone: string; // who claimed it
   paidType?: PaymentType; // set when the admin marks it paid
   paidAt?: string; // ISO date-time, set when the admin marks it paid
+  doorPhotoUrl?: string | null; // full address of the door photo, when known
 }
 
 export interface CouponRecord {
@@ -151,7 +152,7 @@ export class CouponService {
       return;
     }
     this.http
-      .get<{ code: string; value: number; claimedAt: string; status: string; paidVia: string | null; paidAt: string | null }[]>(
+      .get<{ code: string; value: number; claimedAt: string; status: string; paidVia: string | null; paidAt: string | null; doorPhotoPath: string | null }[]>(
         `${API_URL}/carpenter/coupons/mine`,
       )
       .subscribe({
@@ -165,6 +166,7 @@ export class CouponService {
             phone,
             paidType: (r.paidVia ?? undefined) as PaymentType | undefined,
             paidAt: r.paidAt ? utc(r.paidAt) : undefined,
+            doorPhotoUrl: this.photoUrl(r.doorPhotoPath),
           }));
           this.allClaims.update((list) => [...mine, ...list.filter((c) => c.phone !== phone)]);
           this.write(CLAIMS_KEY, this.allClaims());
@@ -173,6 +175,30 @@ export class CouponService {
           /* keep showing what this browser already has */
         },
       });
+  }
+
+  /** Replaces the door photo of one of the signed-in carpenter's unpaid claims. */
+  changeDoorPhoto(code: string, doorPhoto: File): Observable<{ ok: true } | { ok: false; reason: string }> {
+    const body = new FormData();
+    body.append('doorPhoto', doorPhoto, doorPhoto.name);
+    return this.http
+      .put<{ code: string; doorPhotoPath: string }>(
+        `${API_URL}/carpenter/coupons/${encodeURIComponent(code)}/door-photo`,
+        body,
+      )
+      .pipe(
+        tap((dto) => {
+          const url = this.photoUrl(dto.doorPhotoPath);
+          // Cache-bust so the browser shows the new picture straight away.
+          const fresh = url ? `${url}?v=${Date.now()}` : null;
+          this.allClaims.update((list) => list.map((c) => (c.code === code ? { ...c, doorPhotoUrl: fresh } : c)));
+          this.write(CLAIMS_KEY, this.allClaims());
+        }),
+        map((): { ok: true } => ({ ok: true })),
+        catchError((err: HttpErrorResponse) =>
+          of<{ ok: false; reason: string }>({ ok: false, reason: this.describe(err, 'Could not change the photo. Please try again.') }),
+        ),
+      );
   }
 
   /** Admin: the coupons one carpenter has claimed (from the claims kept in this browser), newest first. */

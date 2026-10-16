@@ -4,8 +4,8 @@ import { Component, Input } from '@angular/core';
   selector: 'app-contact-badge',
   template: `
     <a class="badge" [class.floating]="floating" [class.corner]="!floating" [class.raised]="raised" href="tel:+919842496525" aria-label="Call 98424 96525">
-      <img src="Azar.jpg" alt="Azar" />
-      <span class="text"><small>For further queries</small><strong>98424 96525</strong></span>
+      <img src="maks-logo-small.png" alt="MAKS" />
+      <span class="text"><small>For coupon related queries</small><strong>98424 96525</strong></span>
     </a>
   `,
   styles: [`
@@ -16,7 +16,7 @@ import { Component, Input } from '@angular/core';
       box-shadow: 0 4px 14px rgba(40, 22, 8, .22); white-space: nowrap;
       font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     }
-    .badge img { width: 38px; height: 38px; border-radius: 50%; object-fit: cover; border: 2px solid #f5b567; }
+    .badge img { width: 38px; height: 38px; border-radius: 50%; object-fit: contain; background: #fff; padding: 2px; border: 2px solid #f5b567; }
     .text { display: flex; flex-direction: column; line-height: 1.1; }
     small { font-size: 10px; color: #8a5a1f; letter-spacing: .2px; }
     strong { font-size: 14px; }
